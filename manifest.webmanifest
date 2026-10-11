@@ -1,0 +1,15 @@
+{
+ "name": "Carnet Sèche",
+ "short_name": "Sèche",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#F6F2EC",
+ "theme_color": "#D7262B",
+ "lang": "fr",
+ "icons": [
+  {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+  {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+  {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+ ]
+}
