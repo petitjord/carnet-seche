@@ -1,5 +1,5 @@
-const CACHE="seche-v4";
-const SHELL=["./","index.html","manifest.webmanifest","icon-192-v3.png","icon-512-v3.png","apple-touch-icon-v3.png"];
+const CACHE="seche-v5";
+const SHELL=["./","index.html","manifest.webmanifest","icon-192-v4.png","icon-512-v4.png","apple-touch-icon-v4.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()));});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener("fetch",e=>{
