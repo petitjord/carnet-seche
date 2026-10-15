@@ -101,6 +101,14 @@ button:active{transform:scale(.98)}
 .empty .eico{font-size:34px;width:64px;height:64px;border-radius:20px;display:grid;place-items:center;background:var(--coral-soft);color:var(--coral)}
 .empty strong{color:var(--ink);font-family:var(--display);font-size:22px;text-transform:uppercase}
 /* exercises */
+.coach p{margin:0;font-size:16px;line-height:1.5}
+.coach p b{color:var(--coral)}
+.tip{background:var(--sunken);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:14px;display:flex;flex-direction:column;gap:10px}
+.tip p{margin:0} .tip b{color:var(--coral)} .tip.warn{color:var(--warn);border-color:rgba(255,181,71,.35)}
+.prog-sess{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:var(--sunken);border:1px solid var(--line)}
+.gtags{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px}
+.gtags span{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--coral);background:var(--coral-soft);padding:2px 7px;border-radius:6px}
+.chips.open{max-height:none}
 .chips{display:flex;gap:8px;flex-wrap:wrap;max-height:176px;overflow-y:auto}
 .chip{border-radius:999px;padding:8px 12px;font-size:14px;background:var(--sunken);border:1px solid var(--line);font-weight:600;display:inline-flex;gap:6px;align-items:center}
 .chip small{font-weight:500;color:var(--muted);font-size:12px}
@@ -155,6 +163,7 @@ nav.tabs button[aria-selected="true"]{background:var(--coral-soft);color:var(--c
       <div class="week" id="week"></div>
       <div class="small muted" id="week-note"></div>
     </div>
+    <div class="card coach" id="today-coach"></div>
     <div class="card" id="today-kcal"></div>
     <div class="card" id="today-goal"></div>
   </section>
@@ -225,12 +234,17 @@ nav.tabs button[aria-selected="true"]{background:var(--coral-soft);color:var(--c
   <!-- SÉANCES -->
   <section class="panel wrap" id="p-train" style="width:100%" hidden>
     <h2>Mes <span class="grad">séances</span></h2>
-    <div class="card">
+    <div class="card coach" id="train-coach"></div>
+    <div class="card" id="prog-card"></div>
+    <div class="card" id="new-session">
       <h3><span class="hi orange" data-ic="dumbbell"></span>Nouvelle séance</h3>
       <div class="row">
         <div class="field grow"><label for="s-date">Date</label><input id="s-date" type="date"></div>
         <div class="field grow"><label for="s-name">Nom (facultatif)</label><input id="s-name" list="session-names" placeholder="Haut du corps"></div>
       </div>
+      <div class="field"><span class="flab"><span data-ic="target"></span>Muscles travaillés</span>
+        <div class="chips open" id="groups"></div>
+        <div id="pair-tip"></div></div>
       <div class="field" id="tpl-field" hidden><label for="tpl-select"><span data-ic="bookmark"></span>Partir d'une séance type</label>
         <select id="tpl-select"></select></div>
       <div class="field" id="pick-field" hidden>
@@ -401,10 +415,11 @@ function renderResults(){
   el.innerHTML=`<h3><span class="hi" data-ic="flame"></span>Tes besoins</h3>
    <div class="stat"><span class="label">Objectif par jour, déficit compris</span><span class="big num grad">${fmt(c.target)}</span><span class="small muted">kcal · calculé ${src}</span></div>
    <div class="grid3">
-     <div class="tile"><span class="label">${ic('moon')}Repos</span><span class="mid num">${fmt(c.bmr)}</span><span class="small muted">kcal</span></div>
+     <div class="tile"><span class="label">${ic('moon')}Au repos</span><span class="mid num">${fmt(c.bmr)}</span><span class="small muted">kcal · métabolisme</span></div>
      <div class="tile"><span class="label">${ic('gauge')}Maintien</span><span class="mid num">${fmt(c.tdee)}</span><span class="small muted">kcal/jour</span></div>
      <div class="tile"><span class="label">${ic('trend')}Déficit</span><span class="mid num">−${fmt(c.dailyDef)}</span><span class="small muted">kcal/jour</span></div>
    </div>
+   <div class="small muted"><b style="color:var(--ink)">Au repos</b> : ce que ton corps brûle sans bouger. <b style="color:var(--ink)">Maintien</b> : repos + tes activités, ce que tu dépenses vraiment. <b style="color:var(--ink)">Objectif</b> : maintien − déficit, c'est le chiffre à suivre.</div>
    <div class="row"><span class="pill gold">${ic('rocket')}≈ −${fmt(c.weekLoss,2)} kg / semaine</span><span class="pill">${fmt(c.weekLoss/c.w*100,1)} % du poids</span></div>
    ${c.floored?`<div class="note warn">${ic('info')}<span>Le déficit descendait sous ${fmt(c.floor)} kcal ; l'objectif est bloqué à ce plancher. Baisse le déficit ou demande l'avis d'un médecin.</span></div>`:''}
    <h3><span class="hi mint" data-ic="egg"></span>Macros</h3>
@@ -523,15 +538,16 @@ function renderDraft(){
     <div class="field"><label for="ex-r-${i}">Répét.</label><input id="ex-r-${i}" type="number" inputmode="numeric" data-k="reps" value="${esc(e.reps)}"></div>
     <button type="button" class="btn-ghost" data-rm="${i}" aria-label="Retirer">${ic('x')}</button>
   </div>`;}).join('');
-  renderPicks();
+  renderPicks();renderGroups();
 }
 function cleanDraft(){return draft.filter(e=>e.name.trim()).map(e=>({name:e.name.trim(),kg:num(e.kg)||0,sets:parseInt(e.sets)||0,reps:parseInt(e.reps)||0}));}
 function saveSession(){
   const exercises=cleanDraft(),note=$('#s-note').value.trim();
   if(!exercises.length&&!note){toast('Ajoute au moins un exercice ou une note');return;}
   const prs=exercises.filter(e=>{const lp=lastPerf(e.name);return lp&&e.kg>lp.kg;}).length;
-  S.sessions.push({id:uid(),date:$('#s-date').value||today(),name:$('#s-name').value.trim(),exercises,note});
-  save();draft=[];$('#s-note').value='';$('#s-name').value='';$('#tpl-select').value='';
+  const groups=[...new Set([...selGroups,...exercises.map(e=>primaryGroup(e.name)).filter(Boolean)])];
+  S.sessions.push({id:uid(),date:$('#s-date').value||today(),name:$('#s-name').value.trim(),groups,exercises,note});
+  save();draft=[];selGroups=new Set();$('#s-note').value='';$('#s-name').value='';$('#tpl-select').value='';
   renderDraft();renderSessions();renderToday();renderNames();
   toast(prs?`Séance enregistrée · ${prs} record${prs>1?'s':''} battu${prs>1?'s':''} !`:'Séance enregistrée, bien joué !');
 }
@@ -552,11 +568,11 @@ function renderTemplates(){
 }
 function loadTemplate(id){
   const t=S.templates.find(x=>x.id===id);if(!t)return;
-  draft=t.exercises.map(e=>rowFrom(e.name,e));$('#s-name').value=t.name;renderDraft();
+  draft=t.exercises.map(e=>rowFrom(e.name,e));$('#s-name').value=t.name;selGroups=new Set(t.exercises.map(e=>primaryGroup(e.name)).filter(Boolean));renderDraft();
 }
 function repeatSession(id){
   const s=S.sessions.find(x=>x.id===id);if(!s)return;
-  draft=(s.exercises||[]).map(e=>rowFrom(e.name,e));$('#s-name').value=s.name||'';$('#s-date').value=today();
+  draft=(s.exercises||[]).map(e=>rowFrom(e.name,e));$('#s-name').value=s.name||'';selGroups=new Set(sessionGroups(s));$('#s-date').value=today();
   renderDraft();window.scrollTo({top:0,behavior:'smooth'});toast('Séance reprise : ajuste et enregistre');
 }
 function renderNames(){
@@ -570,7 +586,7 @@ function renderSessions(){
     return `<details class="li session" style="display:block">
       <summary><span class="tag">${d.getDate()}<small>${d.toLocaleDateString('fr-FR',{month:'short'}).replace('.','')}</small></span>
         <span style="flex:1;min-width:0"><span style="font-weight:700">${esc(s.name||d.toLocaleDateString('fr-FR',{weekday:'long'}))}</span><br>
-        <span class="small muted">${(s.exercises||[]).length} exercice(s)${vol?` · ${fmt(vol)} kg soulevés`:''}</span></span>${ic('chev','chev')}</summary>
+        <span class="small muted">${(s.exercises||[]).length} exercice(s)${vol?` · ${fmt(vol)} kg soulevés`:''}</span>${sessionGroups(s).length?`<span class="gtags">${sessionGroups(s).map(g=>`<span>${GROUPS[g]}</span>`).join('')}</span>`:''}</span>${ic('chev','chev')}</summary>
       ${(s.exercises||[]).length?`<div style="overflow-x:auto"><table><tr><th>Exercice</th><th class="n">kg</th><th class="n">Séries × rép.</th></tr>${s.exercises.map(e=>`<tr><td>${esc(e.name)}</td><td class="n num">${fkg(e.kg)}</td><td class="n num">${e.sets} × ${e.reps}</td></tr>`).join('')}</table></div>`:''}
       ${s.note?`<p class="small muted" style="margin:8px 0 0">${esc(s.note)}</p>`:''}
       <div class="row" style="justify-content:space-between;margin-top:10px">${(s.exercises||[]).length?`<button type="button" data-rep="${s.id}">${ic('repeat')}Refaire cette séance</button>`:'<span></span>'}<button type="button" class="btn-ghost btn-danger" data-del-s="${s.id}">Supprimer</button></div>
@@ -589,6 +605,121 @@ function onTplList(e){
   pendT=null;S.templates=S.templates.filter(x=>x.id!==id);save();renderTemplates();renderNames();renderPicks();
 }
 
+/* ---------- MUSCLES, PROGRAMMES, COACH ---------- */
+const GROUPS={pecs:'Pecs',dos:'Dos',epaules:'Épaules',biceps:'Biceps',triceps:'Triceps',jambes:'Jambes',fessiers:'Fessiers',abdos:'Abdos'};
+const GORDER=Object.keys(GROUPS);
+const ART={pecs:'les pecs',dos:'le dos',epaules:'les épaules',biceps:'les biceps',triceps:'les triceps',jambes:'les jambes',fessiers:'les fessiers',abdos:'les abdos'};
+const LUI=g=>g==='dos'?'lui':'leur';
+const LIB=[
+ ['Développé couché',['pecs','triceps','epaules'],4,8],['Développé incliné haltères',['pecs','epaules','triceps'],3,10],['Écarté poulie',['pecs'],3,12],['Pompes',['pecs','triceps'],4,15],['Dips',['pecs','triceps'],3,10],
+ ['Tractions',['dos','biceps'],4,8],['Tirage vertical',['dos','biceps'],4,10],['Rowing barre',['dos','biceps'],4,8],['Rowing haltère',['dos','biceps'],3,12],['Tirage horizontal poulie',['dos','biceps'],3,12],['Rowing poulie assis',['dos','biceps'],3,12],['Soulevé de terre',['dos','jambes','fessiers'],3,6],
+ ['Développé militaire',['epaules','triceps'],4,8],['Élévations latérales',['epaules'],3,15],['Oiseau',['epaules','dos'],3,15],['Face pull',['epaules','dos'],3,15],
+ ['Curl haltères',['biceps'],3,12],['Curl barre',['biceps'],3,10],['Curl marteau',['biceps'],3,12],
+ ['Extension triceps poulie',['triceps'],3,12],['Barre au front',['triceps'],3,10],['Dips sur chaise',['triceps','pecs'],3,12],
+ ['Squat',['jambes','fessiers'],4,8],['Squat au poids du corps',['jambes','fessiers'],4,20],['Presse à cuisses',['jambes','fessiers'],3,12],['Fentes',['jambes','fessiers'],3,10],['Fentes arrière',['jambes','fessiers'],3,12],['Leg extension',['jambes'],3,15],['Leg curl',['jambes'],3,12],['Soulevé de terre roumain',['jambes','fessiers','dos'],3,10],['Mollets debout',['jambes'],4,15],
+ ['Hip thrust',['fessiers','jambes'],4,10],['Pont fessier',['fessiers'],3,15],
+ ['Gainage planche (s)',['abdos'],3,45],['Crunch à la poulie',['abdos'],3,15],['Relevés de jambes',['abdos'],3,12],
+];
+const LIBMAP=new Map(LIB.map(x=>[key(x[0]),x]));
+const libFallback=n=>{const x=LIBMAP.get(key(n));return x?{sets:x[2],reps:x[3],kg:''}:undefined;};
+const primaryGroup=n=>{const x=LIBMAP.get(key(n));return x?x[1][0]:null;};
+const PAIRS={
+ pecs:{w:['triceps'],why:"Les triceps travaillent déjà sur tous les développés et les dips : finis-les dans la foulée, ils sont échauffés."},
+ dos:{w:['biceps'],why:"Les biceps travaillent sur chaque tirage et chaque rowing : enchaîne-les juste après le dos."},
+ epaules:{w:['abdos'],why:"Associe-les aux abdos. Ou, pour une séance « poussée », aux pecs et triceps."},
+ biceps:{w:['dos'],why:"Les biceps se travaillent mieux après le dos, qui les a déjà préparés."},
+ triceps:{w:['pecs'],why:"Les triceps se travaillent mieux après les pecs, qui les ont déjà préparés."},
+ jambes:{w:['fessiers','abdos'],why:"Squats et fentes font déjà travailler les fessiers ; termine par du gainage pour les abdos."},
+ fessiers:{w:['jambes'],why:"Les fessiers travaillent avec les jambes sur les squats, les fentes et la presse."},
+ abdos:{w:[],why:"Les abdos se placent en fin de n'importe quelle séance : 10 minutes suffisent."},
+};
+const PROGRAMS=[
+ {id:'fb',name:'Full body',freq:'3 jours/sem · lun, mer, ven',desc:"Tout le corps à chaque séance. Idéal pour démarrer ou reprendre, et très efficace en sèche.",tip:"Laisse au moins un jour de repos entre deux full body.",
+  sessions:[{name:'Full body',ex:['Squat','Développé couché','Rowing haltère','Soulevé de terre roumain','Développé militaire','Gainage planche (s)']}]},
+ {id:'split',name:'Split par muscle',freq:'4 jours/sem · ex. lun pecs, mar dos, jeu jambes, ven épaules',desc:"Un ou deux groupes musculaires par séance, associés pour se compléter.",tip:"Évite d'enchaîner deux jours de suite des muscles qui travaillent ensemble (dos puis biceps, pecs puis triceps).",
+  sessions:[{name:'Pecs + Triceps',groups:['pecs','triceps'],ex:['Développé couché','Développé incliné haltères','Écarté poulie','Dips','Barre au front','Extension triceps poulie']},
+            {name:'Dos + Biceps',groups:['dos','biceps'],ex:['Tractions','Rowing barre','Tirage vertical','Rowing haltère','Curl barre','Curl marteau']},
+            {name:'Jambes + Fessiers',groups:['jambes','fessiers'],ex:['Squat','Presse à cuisses','Fentes','Hip thrust','Leg curl','Mollets debout']},
+            {name:'Épaules + Abdos',groups:['epaules','abdos'],ex:['Développé militaire','Élévations latérales','Oiseau','Face pull','Crunch à la poulie','Gainage planche (s)']}]},
+ {id:'ppl',name:'Push / Pull / Legs',freq:'3 jours/sem, ou 6 pour aller plus loin',desc:"Poussée (pecs, épaules, triceps), tirage (dos, biceps), puis jambes.",tip:"Fais-les toujours dans cet ordre : chaque muscle a 48 h de repos.",
+  sessions:[{name:'Push',groups:['pecs','epaules','triceps'],ex:['Développé couché','Développé incliné haltères','Développé militaire','Élévations latérales','Extension triceps poulie','Dips']},
+            {name:'Pull',groups:['dos','biceps'],ex:['Tractions','Rowing barre','Tirage horizontal poulie','Face pull','Curl barre','Curl marteau']},
+            {name:'Legs',groups:['jambes','fessiers','abdos'],ex:['Squat','Presse à cuisses','Soulevé de terre roumain','Leg curl','Mollets debout','Relevés de jambes']}]},
+ {id:'hb',name:'Haut / Bas',freq:'4 jours/sem · lun haut, mar bas, jeu haut, ven bas',desc:"Le haut et le bas du corps en alternance : plus de volume par muscle qu'un full body.",tip:"Bon choix après 2-3 mois de full body.",
+  sessions:[{name:'Haut du corps',ex:['Développé couché','Tirage vertical','Développé militaire','Rowing poulie assis','Curl haltères','Extension triceps poulie']},
+            {name:'Bas du corps',ex:['Squat','Soulevé de terre roumain','Fentes','Leg curl','Mollets debout','Gainage planche (s)']}]},
+ {id:'home',name:'Maison',freq:'3 jours/sem · sans matériel',desc:"Rien d'autre que ton poids de corps, pour les semaines sans salle.",tip:"Quand tu dépasses 20 répétitions, ralentis la descente (3 secondes) pour garder la difficulté.",
+  sessions:[{name:'Full body maison',ex:['Pompes','Squat au poids du corps','Fentes arrière','Dips sur chaise','Pont fessier','Gainage planche (s)']}]},
+];
+const COMBOS=[{id:'push',label:'pecs + triceps',g:['pecs','triceps'],load:['split',0]},{id:'pull',label:'dos + biceps',g:['dos','biceps'],load:['split',1]},{id:'legs',label:'jambes + fessiers',g:['jambes','fessiers'],load:['split',2]},{id:'sh',label:'épaules + abdos',g:['epaules','abdos'],load:['split',3]},{id:'fb',label:'un full body',g:[],load:['fb',0]}];
+let selGroups=new Set(), progSel='fb';
+const joinFr=a=>a.length<2?(a[0]||''):a.slice(0,-1).join(', ')+' et '+a[a.length-1];
+const daysAgo=iso=>Math.round((parse(today())-parse(iso))/864e5);
+function dayWord(iso){const n=daysAgo(iso);if(n===0)return 'aujourd’hui';if(n===1)return 'hier';if(n<7)return parse(iso).toLocaleDateString('fr-FR',{weekday:'long'});return 'le '+fdate(iso);}
+function sessionGroups(s){const g=new Set(s.groups||[]);(s.exercises||[]).forEach(e=>{const p=primaryGroup(e.name);if(p)g.add(p);});return GORDER.filter(x=>g.has(x));}
+function lastTrained(){const m={};S.sessions.forEach(s=>sessionGroups(s).forEach(g=>{if(!m[g]||s.date>m[g])m[g]=s.date;}));return m;}
+function coachAdvice(){
+  if(!S.sessions.length)return {html:"Pas encore de séance enregistrée. Commence par <b>un full body</b> : tout le corps en une séance, parfait pour démarrer.",combo:'fb'};
+  const lt=lastTrained(),age=g=>lt[g]?daysAgo(lt[g]):99,t=today();
+  const doneToday=S.sessions.some(s=>s.date===t),off=doneToday?1:0;
+  const byDay=new Map();GORDER.filter(g=>age(g)<7).sort((a,b)=>age(a)-age(b)).forEach(g=>{const d=lt[g];if(!byDay.has(d))byDay.set(d,[]);byDay.get(d).push(g);});
+  const parts=[...byDay.entries()].slice(0,3).map(([d,gs])=>joinFr(gs.map(g=>ART[g]))+' '+dayWord(d));
+  const hist=parts.length?'Tu as fait '+joinFr(parts)+'. ':'';
+  const when=doneToday?'Demain':'Aujourd’hui';
+  const pre=doneToday?'Séance faite aujourd’hui, bravo ! ':(!S.profile.jours.includes(dow(new Date()))?'Jour de repos prévu. ':'');
+  const lastS=S.sessions.slice().sort((a,b)=>a.date<b.date?1:-1)[0];
+  if(sessionGroups(lastS).length>=4){
+    const a=daysAgo(lastS.date)+off;
+    if(a<2)return {html:pre+hist+"Laisse 48 h entre deux full body : "+(doneToday?'demain':'aujourd’hui')+", repos, marche ou cardio léger.",combo:null};
+    return {html:pre+hist+`${when}, refais <b>un full body</b>. Ou, si tu veux varier, une séance <b>${COMBOS[0].label}</b>.`,combo:'fb'};
+  }
+  const cands=COMBOS.filter(c=>c.g.length&&c.g.every(g=>age(g)+off>=2)).map(c=>({c,score:Math.min(...c.g.map(age))}));
+  if(!cands.length)return {html:pre+hist+"Tous tes muscles ont travaillé ces 2 derniers jours : "+(doneToday?'demain':'aujourd’hui')+", repos, marche ou cardio léger.",combo:null};
+  cands.sort((a,b)=>b.score-a.score);const best=cands[0].c;
+  return {html:pre+hist+`${when}, fais <b>${best.label}</b>. `+PAIRS[best.g[0]].why,combo:best.id};
+}
+function renderCoach(){
+  const a=coachAdvice();
+  const h=`<h3><span class="hi gold" data-ic="star"></span>Conseil du coach</h3><p>${a.html}</p>`+(a.combo?`<button type="button" class="btn-primary" data-coach="${a.combo}">${ic('dumbbell')}Préparer cette séance</button>`:'');
+  ['#today-coach','#train-coach'].forEach(sel=>{const el=$(sel);el.innerHTML=h;paintIcons(el);});
+}
+function loadProgramSession(pid,idx){
+  const p=PROGRAMS.find(x=>x.id===pid),ss=p&&p.sessions[idx];if(!ss)return;
+  draft=ss.ex.map(n=>rowFrom(n,libFallback(n)));$('#s-name').value=ss.name;$('#s-date').value=today();
+  selGroups=new Set(ss.groups||ss.ex.map(primaryGroup).filter(Boolean));
+  renderDraft();go('train');$('#new-session').scrollIntoView({behavior:'smooth',block:'start'});toast('Séance « '+ss.name+' » prête');
+}
+function renderPrograms(){
+  const p=PROGRAMS.find(x=>x.id===progSel)||PROGRAMS[0];
+  const el=$('#prog-card');
+  el.innerHTML=`<h3><span class="hi" data-ic="bookmark"></span>Programmes</h3>
+   <div class="chips open">${PROGRAMS.map(x=>`<button type="button" class="chip ${x.id===p.id?'added':''}" data-prog="${x.id}">${esc(x.name)}</button>`).join('')}</div>
+   <div class="stat"><span class="label">${ic('calendar')}${esc(p.freq)}</span><span>${esc(p.desc)}</span></div>
+   ${p.sessions.map((ss,i)=>{const gs=ss.groups||[...new Set(ss.ex.map(primaryGroup).filter(Boolean))];return `<div class="prog-sess">
+     <div class="row" style="justify-content:space-between;align-items:flex-start"><div class="grow"><div style="font-weight:700">${esc(ss.name)}</div><div class="gtags">${gs.map(g=>`<span>${GROUPS[g]}</span>`).join('')}</div></div>
+     <button type="button" data-load="${p.id}:${i}">${ic('dumbbell')}Faire</button></div>
+     <div class="small muted">${ss.ex.map(n=>{const f=libFallback(n);return esc(n)+(f?` ${f.sets}×${f.reps}`:'');}).join(' · ')}</div></div>`;}).join('')}
+   <div class="note">${ic('info')}<span>${esc(p.tip)}</span></div>`;
+  paintIcons(el);
+}
+function renderGroups(){
+  const derived=new Set(draft.map(e=>primaryGroup(e.name)).filter(Boolean));
+  $('#groups').innerHTML=GORDER.map(g=>{const on=selGroups.has(g);return `<button type="button" class="chip ${on?'added':''}" data-g="${g}">${ic(on?'check':'plus')}${GROUPS[g]}</button>`;}).join('');
+  const tip=$('#pair-tip');const sel=GORDER.filter(g=>selGroups.has(g));
+  if(!sel.length){tip.innerHTML=`<div class="small muted">Choisis les muscles du jour : je te dis quoi associer et quels exercices faire.</div>`;return;}
+  const lt=lastTrained();let out='';
+  const tired=sel.filter(g=>lt[g]&&daysAgo(lt[g])<2);
+  tired.forEach(g=>{const n=daysAgo(lt[g]);out+=`<div class="tip warn"><p>${ic('info')} Tu as déjà fait ${ART[g]} ${dayWord(lt[g])}${n===1?` : laisse-${LUI(g)} 48 h de repos pour progresser.`:'.'}</p></div>`;});
+  const g0=sel.find(g=>PAIRS[g].w.some(x=>!selGroups.has(x)));
+  if(g0){const miss=PAIRS[g0].w.filter(x=>!selGroups.has(x));
+    out+=`<div class="tip"><p>Avec ${ART[g0]}, je te conseille ${joinFr(miss.map(x=>'<b>'+ART[x]+'</b>'))}. ${PAIRS[g0].why}</p><div class="row">${miss.map(x=>`<button type="button" data-addg="${x}">${ic('plus')}Ajouter ${ART[x]}</button>`).join('')}</div></div>`;
+  }else if(sel.length===1&&sel[0]==='abdos'){out+=`<div class="tip"><p>${PAIRS.abdos.why}</p></div>`;}
+  const inDraft=new Set(draft.map(e=>key(e.name)));
+  const sugg=LIB.filter(x=>selGroups.has(x[1][0])&&!inDraft.has(key(x[0])));
+  if(sugg.length)out+=`<div class="tip"><p style="font-weight:700">Exercices conseillés</p><div class="chips open">${sugg.map(x=>`<button type="button" class="chip" data-sugg="${esc(x[0])}">${ic('plus')}${esc(x[0])} <small>${GROUPS[x[1][0]]} · ${x[2]}×${x[3]}</small></button>`).join('')}</div></div>`;
+  tip.innerHTML=out;
+}
+
 /* ---------- AUJOURD'HUI ---------- */
 function renderToday(){
   const now=new Date(),doy=Math.floor((now-new Date(now.getFullYear(),0,0))/864e5);
@@ -602,6 +733,7 @@ function renderToday(){
     return `<div class="${isDone?'done':plan?'plan':''} ${iso===today()?'today':''}"><b>${d.slice(0,2)}</b>${isDone?ic('check'):plan?ic('dumbbell'):'<span>'+day.getDate()+'</span>'}</div>`;}).join('');
   const isPlan=S.profile.jours.includes(dow(now)),doneToday=done.has(today());
   $('#week-note').textContent=`${nDone} séance(s) faite(s) sur ${S.profile.jours.length} prévue(s). `+(doneToday?'Séance du jour validée, bravo !':isPlan?'Séance prévue aujourd’hui : go !':'Jour de repos : vise tes pas.');
+  renderCoach();
   const c=calc();
   $('#today-kcal').innerHTML=c?`<h3><span class="hi" data-ic="flame"></span>Objectif du jour</h3>
     <div class="stat"><span class="big num grad">${fmt(c.target)}</span><span class="small muted">kcal à ne pas dépasser</span></div>${macroTiles(c)}`
@@ -633,7 +765,7 @@ function go(tab){
   try{sessionStorage.setItem('cs-tab',tab);}catch(e){}
   window.scrollTo(0,0);
 }
-function renderAll(){bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderDraft();renderToday();}
+function renderAll(){renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderDraft();renderToday();}
 
 /* ---------- init ---------- */
 IC.flag='<path d="M4 22V4M4 4h13l-2 4 2 4H4"/>';
@@ -657,6 +789,16 @@ $('#ex-list').addEventListener('input',e=>{const box=e.target.closest('.ex');if(
 $('#ex-list').addEventListener('change',e=>{if(e.target.dataset.k!=='name')return;const i=+e.target.closest('.ex').dataset.i;const lp=lastPerf(draft[i].name);if(lp&&!draft[i].kg){draft[i]=rowFrom(draft[i].name);}renderDraft();});
 $('#ex-list').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;draft.splice(+b.dataset.rm,1);renderDraft();});
 $('#s-save').addEventListener('click',saveSession);
+$('#groups').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;const g=b.dataset.g;selGroups.has(g)?selGroups.delete(g):selGroups.add(g);renderGroups();});
+$('#pair-tip').addEventListener('click',e=>{
+  const a=e.target.closest('[data-addg]');if(a){selGroups.add(a.dataset.addg);renderGroups();return;}
+  const s=e.target.closest('[data-sugg]');if(s){const n=s.dataset.sugg;draft.push(rowFrom(n,libFallback(n)));renderDraft();}
+});
+$('#prog-card').addEventListener('click',e=>{
+  const c=e.target.closest('[data-prog]');if(c){progSel=c.dataset.prog;renderPrograms();return;}
+  const l=e.target.closest('[data-load]');if(l){const [pid,i]=l.dataset.load.split(':');loadProgramSession(pid,+i);}
+});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-coach]');if(!b)return;const c=COMBOS.find(x=>x.id===b.dataset.coach);if(c)loadProgramSession(c.load[0],c.load[1]);});
 $('#tpl-save').addEventListener('click',saveTemplate);
 document.querySelector('nav.tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(b.dataset.tab);});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go);});
