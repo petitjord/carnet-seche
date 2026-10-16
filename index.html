@@ -3,7 +3,7 @@
 <title>Carnet Sèche</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Barlow:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: one-column phone app, sticky header, floating glass tab bar.
    Look: deliberate single dark theme, "gym at night": midnight navy, sunrise gradient (orange > pink > violet) for energy, gold for wins. */
@@ -11,7 +11,7 @@
   color-scheme:dark;
   --bg:#0C0C0C; --surface:#1A1A1A; --surface2:#222222; --sunken:#121212; --ink:#F6F2E9; --muted:#A8A196; --line:#2E2C28; --on-accent:#141210;
   --orange:#FF8A1F; --pink:#FFC22E; --violet:#9B4DFF; --gold:#FFC93C; --mint:#3EE6A0; --sky:#4CC9FF;
-  --hot:#FFC22E; --coral:#FFC22E; --coral-soft:rgba(255,194,46,.14); --night:#141414;
+  --hot:#FFC22E; --coral:#FFC22E; --coral-soft:rgba(255,194,46,.14); --night:#141414; --title:"Bebas Neue","Barlow Condensed","Arial Narrow",sans-serif; --red:#FF5A5F; --red-soft:rgba(255,90,95,.12);
   --hot-soft:rgba(255,194,46,.14);
   --good:#3EE6A0; --warn:#FFB547; --bad:#FF6B7A;
   --prot:#FF5A5F; --fat:#FF9F43; --carb:#3EE6A0;
@@ -30,11 +30,11 @@ body{font-family:var(--body);font-size:16px;line-height:1.45;padding-inline:16px
 .ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;display:inline-block;vertical-align:-.125em}
 .wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding-block:14px 8px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(var(--bg) 70%,transparent)}
-.brand{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:800;font-style:italic;font-size:26px;letter-spacing:.01em;text-transform:uppercase;line-height:1;white-space:nowrap}
-.brand .logo{width:34px;height:34px;border-radius:10px;background:var(--surface2);border:1px solid var(--line);display:grid;place-items:center;font-size:19px;color:var(--coral)}
-.brand b{color:var(--coral);padding-right:4px}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--title);font-weight:400;font-style:normal;font-size:32px;letter-spacing:.04em;text-transform:uppercase;line-height:1;white-space:nowrap}
+.brand .logo{width:34px;height:34px;border-radius:10px;background:var(--surface2);border:1px solid var(--line);display:grid;place-items:center;font-size:19px;color:var(--red)}
+.brand b{color:var(--red);font-weight:400;padding-right:4px}
 .streak{display:inline-flex;align-items:center;gap:5px;font-family:var(--display);font-weight:700;font-size:18px;color:var(--gold);background:rgba(255,201,60,.12);border:1px solid rgba(255,201,60,.3);padding:4px 10px;border-radius:999px;white-space:nowrap}
-h2{font-family:var(--display);font-weight:800;font-style:italic;font-size:32px;text-transform:uppercase;letter-spacing:.01em;margin:4px 0 0;line-height:1;text-wrap:balance}
+h2{font-family:var(--title);font-weight:400;font-style:normal;font-size:38px;letter-spacing:.03em;text-transform:uppercase;letter-spacing:.01em;margin:4px 0 0;line-height:1;text-wrap:balance}
 h3{font-family:var(--display);font-weight:700;font-size:18px;text-transform:uppercase;letter-spacing:.06em;margin:0;color:var(--ink);display:flex;align-items:center;gap:10px}
 .hi{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:17px;flex:none;background:var(--hc,var(--coral-soft));color:var(--hf,var(--coral))}
 .hi.gold{--hc:rgba(255,201,60,.14);--hf:var(--gold)} .hi.mint{--hc:rgba(62,230,160,.14);--hf:var(--mint)} .hi.sky{--hc:rgba(76,201,255,.14);--hf:var(--sky)} .hi.violet{--hc:rgba(155,77,255,.18);--hf:#C39BFF} .hi.orange{--hc:var(--coral-soft);--hf:var(--coral)}
@@ -43,7 +43,7 @@ h3{font-family:var(--display);font-weight:700;font-size:18px;text-transform:uppe
 .num{font-variant-numeric:tabular-nums}
 .big{font-family:var(--display);font-weight:800;font-size:56px;line-height:.95;letter-spacing:-.01em}
 .mid{font-family:var(--display);font-weight:700;font-size:27px;line-height:1.05}
-.grad{color:var(--coral)}
+.grad{color:var(--coral)} h2 .grad{color:var(--red)}
 .muted{color:var(--muted)} .small{font-size:13px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -72,12 +72,12 @@ button:active{transform:scale(.98)}
 .days button{padding:10px 0;font-family:var(--display);font-size:16px;text-transform:uppercase;background:var(--sunken)}
 .days button[aria-pressed="true"]{background:var(--hot);border-color:transparent;color:var(--on-accent)}
 /* motivation */
-.quote{background:var(--night);border:1px solid var(--line);color:var(--ink);border-radius:22px;padding:20px 18px 24px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;border-left:5px solid var(--coral)}
-.quote .bolt{position:absolute;right:-24px;bottom:-34px;font-size:170px;color:rgba(255,194,46,.12);stroke-width:1.6}
+.quote{background:var(--night);border:1px solid var(--line);color:var(--ink);border-radius:22px;padding:20px 18px 24px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;border-left:5px solid var(--red)}
+.quote .bolt{position:absolute;right:-24px;bottom:-34px;font-size:170px;color:var(--red-soft);stroke-width:1.6}
 .quote .top{display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative}
 .quote .date{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);color:var(--muted);font-weight:600;font-size:13px;text-transform:capitalize;padding:5px 10px;border-radius:999px}
-.quote .kicker{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--coral)}
-.quote p{margin:0;font-family:var(--display);font-weight:800;font-style:italic;font-size:32px;line-height:1.05;text-wrap:balance;position:relative;text-transform:uppercase;letter-spacing:.005em}
+.quote .kicker{font-family:var(--title);font-weight:400;font-size:18px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.quote p{margin:0;font-family:var(--title);font-weight:400;font-style:normal;font-size:40px;line-height:1;text-wrap:balance;position:relative;text-transform:uppercase;letter-spacing:.02em}
 /* macros */
 .macrobar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--sunken);gap:3px}
 .macrobar i{display:block;height:100%;border-radius:6px}
@@ -142,7 +142,7 @@ nav.tabs .ic{font-size:22px}
 nav.tabs button[aria-selected="true"]{background:var(--coral-soft);color:var(--coral)}
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;z-index:20;white-space:nowrap;display:flex;align-items:center;gap:6px}
 @media (prefers-reduced-motion:no-preference){.panel{animation:in .25s ease-out}@keyframes in{from{opacity:.3;transform:translateY(6px)}to{opacity:1;transform:none}}}
-@media (max-width:360px){.grid3{grid-template-columns:1fr 1fr}.big{font-size:44px}.quote p{font-size:27px}}
+@media (max-width:360px){.grid3{grid-template-columns:1fr 1fr}.big{font-size:44px}.quote p{font-size:34px}}
 </style>
 </head><body>
 <div class="wrap">
