@@ -3,7 +3,7 @@
 <title>Carnet Sèche</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Barlow:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Allura&family=Gruppo&family=Pinyon+Script&family=Rock+Salt&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: one-column phone app, sticky header, floating glass tab bar.
    Look: deliberate single dark theme, "gym at night": midnight navy, sunrise gradient (orange > pink > violet) for energy, gold for wins. */
@@ -11,7 +11,7 @@
   color-scheme:dark;
   --bg:#0C0C0C; --surface:#1A1A1A; --surface2:#222222; --sunken:#121212; --ink:#F6F2E9; --muted:#A8A196; --line:#2E2C28; --on-accent:#141210;
   --orange:#FF8A1F; --pink:#FFC22E; --violet:#9B4DFF; --gold:#FFC93C; --mint:#3EE6A0; --sky:#4CC9FF;
-  --hot:#FFC22E; --coral:#FFC22E; --coral-soft:rgba(255,194,46,.14); --night:#141414; --title:"Bebas Neue","Barlow Condensed","Arial Narrow",sans-serif; --red:#FF5A5F; --red-soft:rgba(255,90,95,.12);
+  --hot:#FFC22E; --coral:#FFC22E; --coral-soft:rgba(255,194,46,.14); --night:#141414; --title:"Bebas Neue","Barlow Condensed","Arial Narrow",sans-serif; --t-brand:32px; --t-quote:40px; --t-h2:38px; --t-tt:uppercase; --t-ls:.03em; --t-lh:1; --red:#FF5A5F; --red-soft:rgba(255,90,95,.12);
   --hot-soft:rgba(255,194,46,.14);
   --good:#3EE6A0; --warn:#FFB547; --bad:#FF6B7A;
   --prot:#FF5A5F; --fat:#FF9F43; --carb:#3EE6A0;
@@ -30,11 +30,13 @@ body{font-family:var(--body);font-size:16px;line-height:1.45;padding-inline:16px
 .ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;display:inline-block;vertical-align:-.125em}
 .wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding-block:14px 8px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(var(--bg) 70%,transparent)}
-.brand{display:flex;align-items:center;gap:8px;font-family:var(--title);font-weight:400;font-style:normal;font-size:32px;letter-spacing:.04em;text-transform:uppercase;line-height:1;white-space:nowrap}
-.brand .logo{width:34px;height:34px;border-radius:10px;background:var(--surface2);border:1px solid var(--line);display:grid;place-items:center;font-size:19px;color:var(--red)}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--title);font-weight:400;font-style:normal;font-size:var(--t-brand);letter-spacing:var(--t-ls);text-transform:var(--t-tt);line-height:1.15;white-space:nowrap}
+.brand .logo{width:30px;height:30px;display:grid;place-items:center;flex:none}
+.brand .logo svg{width:100%;height:100%;display:block}
+.brand .logo.dot{width:10px;height:10px;border-radius:50%;background:var(--red);margin-right:2px}
 .brand b{color:var(--red);font-weight:400;padding-right:4px}
 .streak{display:inline-flex;align-items:center;gap:5px;font-family:var(--display);font-weight:700;font-size:18px;color:var(--gold);background:rgba(255,201,60,.12);border:1px solid rgba(255,201,60,.3);padding:4px 10px;border-radius:999px;white-space:nowrap}
-h2{font-family:var(--title);font-weight:400;font-style:normal;font-size:38px;letter-spacing:.03em;text-transform:uppercase;letter-spacing:.01em;margin:4px 0 0;line-height:1;text-wrap:balance}
+h2{font-family:var(--title);font-weight:400;font-style:normal;font-size:var(--t-h2);letter-spacing:var(--t-ls);text-transform:var(--t-tt);margin:4px 0 0;line-height:var(--t-lh);text-wrap:balance}
 h3{font-family:var(--display);font-weight:700;font-size:18px;text-transform:uppercase;letter-spacing:.06em;margin:0;color:var(--ink);display:flex;align-items:center;gap:10px}
 .hi{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:17px;flex:none;background:var(--hc,var(--coral-soft));color:var(--hf,var(--coral))}
 .hi.gold{--hc:rgba(255,201,60,.14);--hf:var(--gold)} .hi.mint{--hc:rgba(62,230,160,.14);--hf:var(--mint)} .hi.sky{--hc:rgba(76,201,255,.14);--hf:var(--sky)} .hi.violet{--hc:rgba(155,77,255,.18);--hf:#C39BFF} .hi.orange{--hc:var(--coral-soft);--hf:var(--coral)}
@@ -73,11 +75,15 @@ button:active{transform:scale(.98)}
 .days button[aria-pressed="true"]{background:var(--hot);border-color:transparent;color:var(--on-accent)}
 /* motivation */
 .quote{background:var(--night);border:1px solid var(--line);color:var(--ink);border-radius:22px;padding:20px 18px 24px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;border-left:5px solid var(--red)}
-.quote .bolt{position:absolute;right:-24px;bottom:-34px;font-size:170px;color:var(--red-soft);stroke-width:1.6}
+.quote .qbg{position:absolute;pointer-events:none;color:var(--red-soft)}
+.quote .qbg.quote-mark{right:14px;bottom:-110px;font-family:Georgia,"Times New Roman",serif;font-size:260px;line-height:1;color:rgba(255,90,95,.16)}
+.quote .qbg.ring{right:-46px;bottom:-46px;width:170px;height:170px}
+.quote .qbg.ring svg{width:100%;height:100%}
+.quote .qbg.lines{inset:0;background:repeating-linear-gradient(-45deg,transparent 0 14px,rgba(255,90,95,.05) 14px 15px)}
 .quote .top{display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative}
 .quote .date{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);color:var(--muted);font-weight:600;font-size:13px;text-transform:capitalize;padding:5px 10px;border-radius:999px}
 .quote .kicker{font-family:var(--title);font-weight:400;font-size:18px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
-.quote p{margin:0;font-family:var(--title);font-weight:400;font-style:normal;font-size:40px;line-height:1;text-wrap:balance;position:relative;text-transform:uppercase;letter-spacing:.02em}
+.quote p{margin:0;font-family:var(--title);font-weight:400;font-style:normal;font-size:var(--t-quote);line-height:var(--t-lh);text-wrap:balance;position:relative;text-transform:var(--t-tt);letter-spacing:var(--t-ls)}
 /* macros */
 .macrobar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--sunken);gap:3px}
 .macrobar i{display:block;height:100%;border-radius:6px}
@@ -142,19 +148,19 @@ nav.tabs .ic{font-size:22px}
 nav.tabs button[aria-selected="true"]{background:var(--coral-soft);color:var(--coral)}
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;z-index:20;white-space:nowrap;display:flex;align-items:center;gap:6px}
 @media (prefers-reduced-motion:no-preference){.panel{animation:in .25s ease-out}@keyframes in{from{opacity:.3;transform:translateY(6px)}to{opacity:1;transform:none}}}
-@media (max-width:360px){.grid3{grid-template-columns:1fr 1fr}.big{font-size:44px}.quote p{font-size:34px}}
+@media (max-width:360px){.grid3{grid-template-columns:1fr 1fr}.big{font-size:44px}.quote p{font-size:calc(var(--t-quote) * .85)}}
 </style>
 </head><body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><span class="logo" data-ic="flame"></span><span>Carnet <b>Sèche</b></span></div>
+    <div class="brand"><span class="logo" id="logo"></span><span>Carnet <b>Sèche</b></span></div>
     <span class="streak" id="streak" hidden></span>
   </header>
 
   <!-- AUJOURD'HUI -->
   <section class="panel wrap" id="p-today" style="width:100%">
     <div class="quote">
-      <span class="bolt" data-ic="bolt"></span>
+      <span class="qbg" id="qbg" aria-hidden="true"></span>
       <div class="top"><span class="kicker">Mot du jour</span><span class="date"><span data-ic="calendar"></span><span id="q-date"></span></span></div>
       <p id="q-text"></p>
     </div>
@@ -204,6 +210,18 @@ nav.tabs button[aria-selected="true"]{background:var(--coral-soft);color:var(--c
       <div class="small muted">Tout s'enregistre automatiquement sur ton téléphone.</div>
     </div>
     <div class="card" id="results"></div>
+    <div class="card">
+      <h3><span class="hi violet" data-ic="pen"></span>Apparence</h3>
+      <div class="field"><label for="ui-font">Police des titres et du mot du jour</label>
+        <select id="ui-font"><option value="bebas">Bebas Neue (sport)</option><option value="greatvibes">Great Vibes</option><option value="allura">Allura</option><option value="gruppo">Gruppo</option><option value="pinyon">Pinyon Script</option><option value="rocksalt">Rock Salt</option></select></div>
+      <div class="grid2">
+        <div class="field"><label for="ui-logo">Icône du titre</label>
+          <select id="ui-logo"><option value="ring">Anneau de progression</option><option value="dot">Point rouge</option><option value="none">Aucune</option></select></div>
+        <div class="field"><label for="ui-qbg">Fond du mot du jour</label>
+          <select id="ui-qbg"><option value="quote">Guillemets</option><option value="ring">Anneau</option><option value="lines">Rayures fines</option><option value="none">Aucun</option></select></div>
+      </div>
+      <div class="small muted">L'anneau se remplit au fil de ta progression vers ton poids visé (ou de tes séances de la semaine).</div>
+    </div>
     <div class="card">
       <h3><span class="hi sky" data-ic="shield"></span>Sauvegarde</h3>
       <div class="small muted">Tes données restent sur ce téléphone. Exporte une sauvegarde de temps en temps (Fichiers, iCloud, mail) pour ne rien perdre.</div>
@@ -364,9 +382,10 @@ const QUOTES=[
 
 /* ---------- state ---------- */
 const DEFAULT_PROFILE={sexe:'h',age:'',taille:'',poids:'',activite:'1.375',deficit:'20',cible:'',prot:'2',lip:'0.8',jours:[0,2,4]};
-let S={profile:{...DEFAULT_PROFILE},weights:[],sessions:[],templates:[]};
+const DEFAULT_PREFS={font:'bebas',logo:'ring',qbg:'quote'};
+let S={profile:{...DEFAULT_PROFILE},weights:[],sessions:[],templates:[],prefs:{...DEFAULT_PREFS}};
 const LS='carnet-seche-v1';
-function load(){try{const r=localStorage.getItem(LS);if(r){const o=JSON.parse(r);S={profile:{...DEFAULT_PROFILE,...(o.profile||{})},weights:o.weights||[],sessions:o.sessions||[],templates:o.templates||[]};}}catch(e){}}
+function load(){try{const r=localStorage.getItem(LS);if(r){const o=JSON.parse(r);S={profile:{...DEFAULT_PROFILE,...(o.profile||{})},weights:o.weights||[],sessions:o.sessions||[],templates:o.templates||[],prefs:{...DEFAULT_PREFS,...(o.prefs||{})}};}}catch(e){}}
 function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){toast('Enregistrement impossible sur cet appareil');}}
 let toastT;function toast(t){const el=$('#toast');el.innerHTML=ic('check')+esc(t);el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2000);}
 
@@ -442,7 +461,7 @@ function wireProfile(){
   $('#import').addEventListener('change',e=>{
     const f=e.target.files[0];if(!f)return;const r=new FileReader();
     r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||!o.profile)throw 0;
-      S={profile:{...DEFAULT_PROFILE,...o.profile},weights:o.weights||[],sessions:o.sessions||[],templates:o.templates||[]};save();renderAll();toast('Sauvegarde restaurée');}
+      S={profile:{...DEFAULT_PROFILE,...o.profile},weights:o.weights||[],sessions:o.sessions||[],templates:o.templates||[],prefs:{...DEFAULT_PREFS,...(o.prefs||{})}};save();renderAll();toast('Sauvegarde restaurée');}
       catch(err){toast('Fichier non reconnu');}e.target.value='';};
     r.readAsText(f);
   });
@@ -720,6 +739,35 @@ function renderGroups(){
   tip.innerHTML=out;
 }
 
+/* ---------- APPARENCE ---------- */
+const FONTS={
+ bebas:{f:'"Bebas Neue","Barlow Condensed",sans-serif',brand:32,quote:40,h2:38,tt:'uppercase',ls:'.03em',lh:1},
+ greatvibes:{f:'"Great Vibes",cursive',brand:36,quote:40,h2:42,tt:'none',ls:'0',lh:1.15},
+ allura:{f:'"Allura",cursive',brand:38,quote:42,h2:44,tt:'none',ls:'0',lh:1.1},
+ gruppo:{f:'"Gruppo",sans-serif',brand:28,quote:31,h2:32,tt:'uppercase',ls:'.1em',lh:1.15},
+ pinyon:{f:'"Pinyon Script",cursive',brand:30,quote:32,h2:34,tt:'none',ls:'0',lh:1.25},
+ rocksalt:{f:'"Rock Salt",cursive',brand:20,quote:22,h2:24,tt:'none',ls:'0',lh:1.55},
+};
+function progressPct(){
+  const w=sortedW(),cible=num(S.profile.cible);
+  if(w.length&&!isNaN(cible)&&w[0].w>cible)return Math.max(0,Math.min(1,(w[0].w-w[w.length-1].w)/(w[0].w-cible)));
+  const mon=isoDay(mondayOf(new Date())),n=new Set(S.sessions.filter(s=>s.date>=mon).map(s=>s.date)).size;
+  return Math.min(1,n/Math.max(1,S.profile.jours.length));
+}
+function ringSVG(pct,sw){const r=20-sw/2,c=2*Math.PI*r,len=Math.max(.04,pct)*c;
+  return `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="${r}" fill="none" stroke="var(--line)" stroke-width="${sw}"/><circle cx="20" cy="20" r="${r}" fill="none" stroke="var(--red)" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 20 20)"/></svg>`;}
+function applyLook(){
+  const P=S.prefs,F=FONTS[P.font]||FONTS.bebas,st=document.documentElement.style;
+  st.setProperty('--title',F.f);st.setProperty('--t-brand',F.brand+'px');st.setProperty('--t-quote',F.quote+'px');st.setProperty('--t-h2',F.h2+'px');
+  st.setProperty('--t-tt',F.tt);st.setProperty('--t-ls',F.ls);st.setProperty('--t-lh',F.lh);
+  const pct=progressPct(),lg=$('#logo');
+  lg.className='logo'+(P.logo==='dot'?' dot':'');lg.hidden=P.logo==='none';lg.innerHTML=P.logo==='ring'?ringSVG(pct,5):'';
+  lg.title=P.logo==='ring'?Math.round(pct*100)+' % de progression':'';
+  const q=$('#qbg');q.className='qbg '+({quote:'quote-mark',ring:'ring',lines:'lines'}[P.qbg]||'');q.hidden=P.qbg==='none';
+  q.innerHTML=P.qbg==='quote'?'“':P.qbg==='ring'?ringSVG(pct,3):'';
+  ['font','logo','qbg'].forEach(k=>{const el=$('#ui-'+k);if(el)el.value=P[k];});
+}
+
 /* ---------- AUJOURD'HUI ---------- */
 function renderToday(){
   const now=new Date(),doy=Math.floor((now-new Date(now.getFullYear(),0,0))/864e5);
@@ -733,7 +781,7 @@ function renderToday(){
     return `<div class="${isDone?'done':plan?'plan':''} ${iso===today()?'today':''}"><b>${d.slice(0,2)}</b>${isDone?ic('check'):plan?ic('dumbbell'):'<span>'+day.getDate()+'</span>'}</div>`;}).join('');
   const isPlan=S.profile.jours.includes(dow(now)),doneToday=done.has(today());
   $('#week-note').textContent=`${nDone} séance(s) faite(s) sur ${S.profile.jours.length} prévue(s). `+(doneToday?'Séance du jour validée, bravo !':isPlan?'Séance prévue aujourd’hui : go !':'Jour de repos : vise tes pas.');
-  renderCoach();
+  renderCoach();applyLook();
   const c=calc();
   $('#today-kcal').innerHTML=c?`<h3><span class="hi" data-ic="flame"></span>Objectif du jour</h3>
     <div class="stat"><span class="big num grad">${fmt(c.target)}</span><span class="small muted">kcal à ne pas dépasser</span></div>${macroTiles(c)}`
@@ -789,6 +837,7 @@ $('#ex-list').addEventListener('input',e=>{const box=e.target.closest('.ex');if(
 $('#ex-list').addEventListener('change',e=>{if(e.target.dataset.k!=='name')return;const i=+e.target.closest('.ex').dataset.i;const lp=lastPerf(draft[i].name);if(lp&&!draft[i].kg){draft[i]=rowFrom(draft[i].name);}renderDraft();});
 $('#ex-list').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;draft.splice(+b.dataset.rm,1);renderDraft();});
 $('#s-save').addEventListener('click',saveSession);
+['font','logo','qbg'].forEach(k=>$('#ui-'+k).addEventListener('change',e=>{S.prefs[k]=e.target.value;save();applyLook();}));
 $('#groups').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;const g=b.dataset.g;selGroups.has(g)?selGroups.delete(g):selGroups.add(g);renderGroups();});
 $('#pair-tip').addEventListener('click',e=>{
   const a=e.target.closest('[data-addg]');if(a){selGroups.add(a.dataset.addg);renderGroups();return;}
