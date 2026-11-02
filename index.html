@@ -265,22 +265,20 @@ small.down{color:var(--good)}small.up{color:var(--bad)}
 
   <!-- AUJOURD'HUI -->
   <section class="panel wrap" id="p-today" style="width:100%">
+    <div class="card" id="review-card"></div>
     <div class="quote">
       <span class="qbg" id="qbg" aria-hidden="true"></span>
       <div class="top"><span class="kicker">Mot du jour</span><span class="date"><span data-ic="calendar"></span><span id="q-date"></span></span></div>
       <p id="q-text"></p>
     </div>
-    <div class="card" id="review-card" hidden></div>
     <div class="card">
       <h3><span class="hi" data-ic="dumbbell"></span>Cette semaine</h3>
       <div class="week" id="week"></div>
       <div class="small muted" id="week-note"></div>
     </div>
-    <div class="card" id="challenges-card"></div>
     <div class="card coach" id="today-coach"></div>
     <div class="card" id="today-kcal"></div>
     <div class="card" id="today-goal"></div>
-    <div class="card" id="badges-card"></div>
   </section>
 
   <!-- PROFIL -->
@@ -1601,7 +1599,7 @@ const BADGES=[
  ['c1','1 000 kcal de cardio','activity',s=>[s.kc,1000]],['c5','5 000 kcal de cardio','activity',s=>[s.kc,5000]],
  ['iw5','5 marches inclinées','activity',s=>[s.walks,5]],['iw20','20 marches inclinées','activity',s=>[s.walks,20]],
 ];
-function checkBadges(silent){
+function checkBadges(silent){return;
   if(!S.prefs.badges)S.prefs.badges={};const st=stats(),got=[];
   BADGES.forEach(([id,name,,f])=>{const [c,g]=f(st);if(c>=g&&!S.prefs.badges[id]){S.prefs.badges[id]=today();got.push(name);}});
   if(got.length){save();if(!silent){setTimeout(()=>{confetti();haptic('strong');toast('Badge débloqué : '+got[got.length-1]);},400);}}
@@ -1648,12 +1646,13 @@ function renderChallenges(){
 }
 function renderReview(){
   const el=$('#review-card');if(!el)return;const d=dow(new Date());
-  if(d!==6&&d!==0){el.hidden=true;return;}el.hidden=false;
-  const off=d===6?0:-1,w=weekStats(off),p=weekStats(off-1),[a,b]=weekRange(off);
-  const delta=(x,y,u='',dec=0)=>y?`<small class="${x>=y?'up':'down'}">${x>=y?'+':''}${fmt(x-y,dec)}${u}</small>`:'';
+  el.hidden=false;
+  const off=d===0?-1:0,w=weekStats(off),p=weekStats(off-1),[a,b]=weekRange(off);
+  const delta=(x,y,u='',dec=0)=>y&&x!==y?`<small class="${x>=y?'up':'down'}">${x>=y?'+':''}${fmt(x-y,dec)}${u}</small>`:'';
   const wd=w.avgW!=null&&p.avgW!=null?w.avgW-p.avgW:null;
-  const msg=w.n>=(S.profile.jours.length||3)?'Semaine parfaite : tu as tenu tous tes rendez-vous. Continue comme ça !':w.n?'Belle semaine. Vise une séance de plus la semaine prochaine.':'Semaine calme : on repart lundi, une séance à la fois.';
-  el.innerHTML=`<h3><span class="hi violet" data-ic="calendar"></span>Bilan de ${off===0?'ta':'la'} semaine <span class="small muted" style="text-transform:none;letter-spacing:0">${fdate(a)} → ${fdate(b)}</span></h3>
+  const goalN=S.profile.jours.length||3,inProg=off===0&&d!==6;
+  const msg=inProg?(w.n>=goalN?'Objectif de la semaine déjà atteint, bravo ! Tout ce qui suit, c\'est du bonus.':`Encore ${goalN-w.n} séance${goalN-w.n>1?'s':''} pour tenir ton objectif de la semaine. Tu peux le faire !`):w.n>=goalN?'Semaine parfaite : tu as tenu tous tes rendez-vous. Continue comme ça !':w.n?'Belle semaine. Vise une séance de plus la semaine prochaine.':'Semaine calme : on repart lundi, une séance à la fois.';
+  el.innerHTML=`<h3><span class="hi violet" data-ic="calendar"></span>${off===0&&d!==6?'Ta semaine en cours':'Bilan de la semaine'} <span class="small muted" style="text-transform:none;letter-spacing:0">${fdate(a)} → ${fdate(b)}</span></h3>
    <div class="grid2 review">
     <div class="tile"><span class="label">${ic('dumbbell')}Séances</span><span class="mid num">${w.n} ${delta(w.n,p.n)}</span></div>
     <div class="tile"><span class="label">${ic('scale')}Volume</span><span class="mid num">${fmt(w.vol)} kg</span></div>
