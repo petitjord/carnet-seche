@@ -1,4 +1,4 @@
-const CACHE="seche-v14";
+const CACHE="seche-v15";
 const EXT_CACHE="seche-ext-v1";
 const SHELL=["./","index.html","manifest.webmanifest","icon-192-v5.png","icon-512-v5.png","apple-touch-icon-v5.png"];
 const EXT=/^https:\/\/(fonts\.googleapis\.com\/|fonts\.gstatic\.com\/|www\.gstatic\.com\/firebasejs\/)/;

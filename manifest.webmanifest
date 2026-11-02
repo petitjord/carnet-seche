@@ -8,8 +8,59 @@
  "theme_color": "#0C0C0C",
  "lang": "fr",
  "icons": [
-  {"src": "icon-192-v5.png", "sizes": "192x192", "type": "image/png"},
-  {"src": "icon-512-v5.png", "sizes": "512x512", "type": "image/png"},
-  {"src": "icon-512-v5.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  {
+   "src": "icon-192-v5.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512-v5.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512-v5.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "Mode salle",
+   "short_name": "Salle",
+   "url": "./#salle",
+   "icons": [
+    {
+     "src": "icon-192-v5.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Nouvelle séance",
+   "short_name": "Séance",
+   "url": "./#train",
+   "icons": [
+    {
+     "src": "icon-192-v5.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Me peser",
+   "short_name": "Poids",
+   "url": "./#poids",
+   "icons": [
+    {
+     "src": "icon-192-v5.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  }
  ]
 }
