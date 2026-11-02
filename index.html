@@ -788,7 +788,8 @@ function cardioOf(n){const k=key(n);if(!k)return null;if(CARDIO[k])return CARDIO
 function cardioKcal(n,l){const c=cardioOf(n);if(!c)return 0;const w=currentWeight()||75,min=num(l.min)||0;if(!min)return 0;
   const v=(num(l.speed)||0)*1000/60,g=(num(l.incl)||0)/100;let vo2;
   if(c.kind==='walk')vo2=3.5+0.1*v+1.8*v*g;else if(c.kind==='run')vo2=3.5+0.2*v+0.9*v*g;else vo2=(c.met||6)*3.5;
-  return vo2*w/1000*5*min;}
+  // calories nettes : on retire la dépense de repos (3,5 ml/kg/min), déjà comptée dans ton maintien
+  return Math.max(0,vo2-3.5)*w/1000*5*min;}
 const exKcal=e=>cardioOf(e.name)?e.lines.reduce((a,l)=>a+cardioKcal(e.name,l),0):0;
 function normEx(e){if(e&&Array.isArray(e.lines))return {name:e.name||'',lines:e.lines.map(l=>({...l}))};
   return {name:(e&&e.name)||'',lines:[{kg:e?.kg??'',sets:e?.sets??3,reps:e?.reps??10}]};}
