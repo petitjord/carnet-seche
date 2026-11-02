@@ -203,7 +203,7 @@ nav.tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-in
 nav.tabs button{border:none;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;color:var(--muted);font-size:11px;font-weight:600;border-radius:16px}
 nav.tabs .ic{font-size:22px}
 nav.tabs button[aria-selected="true"]{background:var(--coral-soft);color:var(--coral)}
-.toast{pointer-events:none;position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;z-index:20;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.toast{pointer-events:none;position:fixed;left:50%;bottom:calc(158px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;z-index:20;white-space:nowrap;display:flex;align-items:center;gap:6px}
 @media (prefers-reduced-motion:no-preference){.panel{animation:in .25s ease-out}@keyframes in{from{opacity:.3;transform:translateY(6px)}to{opacity:1;transform:none}}}
 /* thème clair */
 :root[data-theme="light"]{--bg:#F2F1EE;--surface:#FFFFFF;--surface2:#F8F7F4;--sunken:#ECEAE5;--ink:#17140F;--muted:#686258;--line:#DCD8CF;--on-accent:#1A1408;--hot:#E3A008;--coral:#E3A008;--coral-soft:rgba(227,160,8,.15);--night:#FFFFFF;--gold:#B87F00;--good:#12925A;--warn:#B86E00;--bad:#D23A3A;--prot:#E5484D;--fat:#E07B00;--carb:#12925A;color-scheme:light}
@@ -270,7 +270,6 @@ small.down{color:var(--good)}small.up{color:var(--bad)}
       <div class="top"><span class="kicker">Mot du jour</span><span class="date"><span data-ic="calendar"></span><span id="q-date"></span></span></div>
       <p id="q-text"></p>
     </div>
-    <div class="card" id="daily-card"></div>
     <div class="card" id="review-card" hidden></div>
     <div class="card">
       <h3><span class="hi" data-ic="dumbbell"></span>Cette semaine</h3>
@@ -340,9 +339,9 @@ small.down{color:var(--good)}small.up{color:var(--bad)}
       </div>
     </div>
     <div class="card">
-      <h3><span class="hi orange" data-ic="history"></span>Séance et objectifs</h3>
+      <h3><span class="hi orange" data-ic="history"></span>Séance</h3>
       <div class="field"><label for="ui-rest">Repos entre les séries (minuteur automatique)</label><select id="ui-rest"><option value="0">Pas de minuteur</option><option value="45">45 s</option><option value="60">1 min</option><option value="90">1 min 30</option><option value="120">2 min</option><option value="150">2 min 30</option><option value="180">3 min</option></select></div>
-      <div class="grid2">
+      <div class="grid2" hidden>
         <div class="field"><label for="ui-stepsGoal">Objectif de pas</label><select id="ui-stepsGoal"><option value="6000">6 000</option><option value="8000">8 000</option><option value="10000">10 000</option><option value="12000">12 000</option><option value="15000">15 000</option></select></div>
         <div class="field"><label for="ui-waterGoal">Objectif d'eau</label><select id="ui-waterGoal"><option value="1500">1,5 L</option><option value="2000">2 L</option><option value="2500">2,5 L</option><option value="3000">3 L</option></select></div>
       </div>
@@ -372,26 +371,6 @@ small.down{color:var(--good)}small.up{color:var(--bad)}
     </div>
     <div class="card"><h3><span class="hi" data-ic="trend"></span>Évolution</h3><div id="w-stats" style="display:flex;flex-direction:column;gap:12px"></div><div id="w-chart"></div></div>
     <div class="card"><h3><span class="hi violet" data-ic="history"></span>Historique</h3><div class="list" id="w-list"></div></div>
-    <div class="card">
-      <h3><span class="hi sky" data-ic="target"></span>Mensurations</h3>
-      <div class="field"><label for="m-date">Date</label><input id="m-date" type="date"></div>
-      <div class="grid3 mgrid">
-        <div class="field"><label for="m-waist">Taille (cm)</label><input id="m-waist" type="number" inputmode="decimal" step="0.5" placeholder="92"></div>
-        <div class="field"><label for="m-hips">Hanches</label><input id="m-hips" type="number" inputmode="decimal" step="0.5" placeholder="100"></div>
-        <div class="field"><label for="m-chest">Poitrine</label><input id="m-chest" type="number" inputmode="decimal" step="0.5" placeholder="104"></div>
-        <div class="field"><label for="m-arm">Bras</label><input id="m-arm" type="number" inputmode="decimal" step="0.5" placeholder="36"></div>
-        <div class="field"><label for="m-thigh">Cuisse</label><input id="m-thigh" type="number" inputmode="decimal" step="0.5" placeholder="58"></div>
-      </div>
-      <button type="button" id="m-add"><span data-ic="plus"></span>Enregistrer les mesures</button>
-      <div id="m-list"></div>
-    </div>
-    <div class="card">
-      <h3><span class="hi gold" data-ic="star"></span>Photos avant / après</h3>
-      <div class="row"><div class="field grow"><label for="ph-date">Date</label><input id="ph-date" type="date"></div><button type="button" id="ph-btn" style="align-self:flex-end"><span data-ic="plus"></span>Ajouter une photo</button></div>
-      <input type="file" id="ph-in" accept="image/*" multiple hidden>
-      <div id="ph-list"></div>
-      <div class="small muted">Les photos restent sur ce téléphone uniquement (elles ne partent pas dans la synchro).</div>
-    </div>
   </section>
 
   <!-- SÉANCES -->
@@ -1391,7 +1370,7 @@ function renderToday(){
   const isPlan=S.profile.jours.includes(dow(now)),doneToday=done.has(today());
   const totV=S.sessions.reduce((t,s)=>t+(s.exercises||[]).reduce((a,e)=>a+exVol(e),0),0),totK=S.sessions.reduce((t,s)=>t+(s.exercises||[]).reduce((a,e)=>a+exKcal(e),0),0);
   $('#week-note').innerHTML=esc(`${nDone} séance(s) faite(s) sur ${S.profile.jours.length} prévue(s). `+(doneToday?'Séance du jour validée, bravo !':isPlan?'Séance prévue aujourd’hui : go !':'Jour de repos : vise tes pas.'))+(S.sessions.length?`<br><b style="color:var(--ink)">Depuis le début</b> : ${S.sessions.length} séance${S.sessions.length>1?'s':''}${totV?` · ${fmt(totV)} kg soulevés`:''}${totK?` · ${fmt(totK)} kcal de cardio`:''}`:'');
-  renderCoach();applyLook();renderDaily();renderChallenges();renderReview();renderBadges();
+  renderCoach();applyLook();renderChallenges();renderReview();renderBadges();
   const c=calc();
   $('#today-kcal').innerHTML=c?`<h3><span class="hi" data-ic="flame"></span>Objectif du jour</h3>
     <div class="stat"><span class="big num grad">${fmt(c.target)}</span><span class="small muted">kcal à ne pas dépasser</span></div>${macroTiles(c)}`
@@ -1621,8 +1600,6 @@ const BADGES=[
  ['pr1','Premier record','star',s=>[s.prs,1]],['pr10','10 records','star',s=>[s.prs,10]],['pr25','25 records','star',s=>[s.prs,25]],
  ['c1','1 000 kcal de cardio','activity',s=>[s.kc,1000]],['c5','5 000 kcal de cardio','activity',s=>[s.kc,5000]],
  ['iw5','5 marches inclinées','activity',s=>[s.walks,5]],['iw20','20 marches inclinées','activity',s=>[s.walks,20]],
- ['st10','10 000 pas en un jour','activity',s=>[s.maxSteps,1e4]],['st20','20 000 pas en un jour','activity',s=>[s.maxSteps,2e4]],
- ['wa7','Objectif eau 7 jours','drop',s=>[s.waterDays,7]],
 ];
 function checkBadges(silent){
   if(!S.prefs.badges)S.prefs.badges={};const st=stats(),got=[];
@@ -1657,7 +1634,7 @@ const CH_POOL={
  steps20:['Une journée à 20 000 pas','activity',w=>w.maxSteps,20000],steps70:['70 000 pas dans la semaine','activity',w=>w.steps,70000],
  sess4:['4 séances','dumbbell',w=>w.n,4],vol15:['15 000 kg soulevés','dumbbell',w=>w.vol,15000],pr2:['Bats 2 records','star',w=>w.prs,2],legs2:['2 séances jambes','dumbbell',w=>w.legs,2],water5:['Objectif eau 5 jours','drop',w=>w.waterDays,5],
 };
-function weekChallenges(){const k=isoWeek(new Date()),odd=(k+1)%2===0;const train=['sess4','vol15','pr2','legs2','water5'][k%5];return [odd?'walk3':'cardio',odd?'steps20':'steps70',train];}
+function weekChallenges(){const k=isoWeek(new Date()),odd=(k+1)%2===0,P=['sess4','vol15','pr2','legs2'];return [odd?'walk3':'cardio',P[k%4],P[(k+1)%4]];}
 function renderChallenges(){
   const el=$('#challenges-card');if(!el)return;const w=weekStats(0),wk=weekRange(0)[0];
   if(!S.prefs.chDone)S.prefs.chDone={};const done=S.prefs.chDone[wk]||[];let fresh=null;
@@ -1681,7 +1658,7 @@ function renderReview(){
     <div class="tile"><span class="label">${ic('dumbbell')}Séances</span><span class="mid num">${w.n} ${delta(w.n,p.n)}</span></div>
     <div class="tile"><span class="label">${ic('scale')}Volume</span><span class="mid num">${fmt(w.vol)} kg</span></div>
     <div class="tile"><span class="label">${ic('flame')}Cardio</span><span class="mid num">${fmt(w.kc)} kcal</span></div>
-    <div class="tile"><span class="label">${ic('activity')}Pas / jour</span><span class="mid num">${w.days?fmt(w.steps/w.days):'—'}</span></div>
+    <div class="tile"><span class="label">${ic('activity')}Marches inclinées</span><span class="mid num">${w.walks}</span></div>
     <div class="tile"><span class="label">${ic('star')}Records</span><span class="mid num">${w.prs}</span></div>
     <div class="tile"><span class="label">${ic('trend')}Poids moyen</span><span class="mid num">${w.avgW!=null?fmt(w.avgW,1)+' kg':'—'} ${wd!=null?`<small class="${wd<=0?'down':'up'}">${wd>0?'+':''}${fmt(wd,1)}</small>`:''}</span></div>
    </div><p style="margin:0">${esc(msg)}</p>`;
@@ -1840,8 +1817,8 @@ function go(tab){
   try{sessionStorage.setItem('cs-tab',tab);}catch(e){}
   window.scrollTo(0,0);
 }
-function renderAll(){renderProgress();renderMeasures();renderPhotos();renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderDraft();renderToday();renderSync();}
-function renderRemote(){renderProgress();renderMeasures();renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderPicks();renderGroups();renderToday();}
+function renderAll(){renderProgress();renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderDraft();renderToday();renderSync();}
+function renderRemote(){renderProgress();renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderPicks();renderGroups();renderToday();}
 
 /* ---------- init ---------- */
 IC.flag='<path d="M4 22V4M4 4h13l-2 4 2 4H4"/>';
@@ -1861,8 +1838,7 @@ $('#picks').addEventListener('click',e=>{const b=e.target.closest('[data-pick]')
   if(i>=0)draft.splice(i,1);else draft.push(rowFrom(n,libFallback(n)));
   renderDraft();});
 $('#ex-add').addEventListener('click',()=>{draft.push({name:'',lines:[{kg:'',sets:3,reps:10}]});renderDraft();$('#ex-n-'+(draft.length-1))?.focus();});
-loadDraft();wireDraft();wireSync();wireDaily();wireGym();wireMeasures();wirePhotos();
-$('#m-date').value=today();$('#ph-date').value=today();
+loadDraft();wireDraft();wireSync();wireGym();
 $('#gym-open').addEventListener('click',openGym);
 $('#rest').addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if(!b)return;if(b.dataset.rest==='skip')stopRest();else{RT.end+=15000;RT.total+=15;tickRest();}});
 $('#progress-card').addEventListener('change',e=>{if(e.target.id==='prog-ex'){progEx=e.target.value;renderProgress();}});
@@ -1871,7 +1847,7 @@ window.addEventListener('hashchange',routeHash);
 applyTheme();
 document.querySelectorAll('[data-close-settings]').forEach(b=>b.addEventListener('click',()=>go(prevTab)));
 $('#s-save').addEventListener('click',saveSession);
-['font','logo','qbg','color','theme','haptics','rest','stepsGoal','waterGoal'].forEach(k=>$('#ui-'+k).addEventListener('change',e=>{S.prefs[k]=e.target.value;save();applyLook();renderDaily();renderChallenges();}));
+['font','logo','qbg','color','theme','haptics','rest','stepsGoal','waterGoal'].forEach(k=>$('#ui-'+k).addEventListener('change',e=>{S.prefs[k]=e.target.value;save();applyLook();renderChallenges();}));
 $('#groups').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;const g=b.dataset.g;selGroups.has(g)?selGroups.delete(g):selGroups.add(g);renderGroups();});
 $('#pair-tip').addEventListener('click',e=>{
   const a=e.target.closest('[data-addg]');if(a){selGroups.add(a.dataset.addg);renderGroups();return;}
