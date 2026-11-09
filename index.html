@@ -1656,9 +1656,7 @@ function renderReview(){
   el.innerHTML=`<h3><span class="hi violet" data-ic="calendar"></span>${off===0&&d!==6?'Ta semaine en cours':'Bilan de la semaine'} <span class="small muted" style="text-transform:none;letter-spacing:0">${fdate(a)} → ${fdate(b)}</span></h3>
    <div class="grid2 review">
     <div class="tile"><span class="label">${ic('dumbbell')}Séances</span><span class="mid num">${w.n} ${delta(w.n,p.n)}</span></div>
-    <div class="tile"><span class="label">${ic('scale')}Volume</span><span class="mid num">${fmt(w.vol)} kg</span></div>
     <div class="tile"><span class="label">${ic('flame')}Cardio</span><span class="mid num">${fmt(w.kc)} kcal</span></div>
-    <div class="tile"><span class="label">${ic('activity')}Marches inclinées</span><span class="mid num">${w.walks}</span></div>
     <div class="tile"><span class="label">${ic('star')}Records</span><span class="mid num">${w.prs}</span></div>
     <div class="tile"><span class="label">${ic('trend')}Poids moyen</span><span class="mid num">${w.avgW!=null?fmt(w.avgW,1)+' kg':'—'} ${wd!=null?`<small class="${wd<=0?'down':'up'}">${wd>0?'+':''}${fmt(wd,1)}</small>`:''}</span></div>
    </div><p style="margin:0">${esc(msg)}</p>`;
@@ -1824,6 +1822,8 @@ function renderRemote(){renderProgress();renderPrograms();bindProfile();renderRe
 IC.flag='<path d="M4 22V4M4 4h13l-2 4 2 4H4"/>';
 paintIcons();
 load();migrate();syLoad();
+(function fixNov9(){const s=S.sessions.find(x=>x.date==='2026-11-06'&&!x.name&&x.start==='12:39'&&x.end==='13:14');if(!s)return;
+  const ts=(s.exercises||[]).flatMap(e=>e.lines.map(l=>l.t).filter(Boolean)).sort();s.date='2026-11-09';if(ts.length)s.start=ts[0];saveLocal();})();
 $('#w-date').value=today();$('#s-date').value=today();
 wireProfile();
 $('#w-add').addEventListener('click',addWeight);
