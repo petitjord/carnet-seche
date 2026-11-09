@@ -3,7 +3,7 @@
 <title>Carnet Sèche</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Allura&family=Gruppo&family=Pinyon+Script&family=Rock+Salt&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Barlow:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Allura&family=Gruppo&family=Pinyon+Script&family=Rock+Salt&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: one-column phone app, sticky header, floating glass tab bar.
    Look: deliberate single dark theme, "gym at night": midnight navy, sunrise gradient (orange > pink > violet) for energy, gold for wins. */
@@ -882,8 +882,9 @@ function rowFrom(name,fb){const c=cardioOf(name),lp=lastPerf(name,editId);
   if(lp)return {name,lines:lp.lines.map(stripLine)};
   if(c)return {name,lines:[{...c.def}]};
   return {name,lines:[{kg:fb?.kg??'',sets:fb?.sets??3,reps:fb?.reps??10}]};}
-function saveDraft(){try{localStorage.setItem('carnet-seche:draft',JSON.stringify({draft,editId,draftStart,date:$('#s-date').value,name:$('#s-name').value,note:$('#s-note').value,groups:[...selGroups]}));}catch(e){}}
+function saveDraft(){try{localStorage.setItem('carnet-seche:draft',JSON.stringify({savedOn:today(),draft,editId,draftStart,date:$('#s-date').value,name:$('#s-name').value,note:$('#s-note').value,groups:[...selGroups]}));}catch(e){}}
 function loadDraft(){try{const o=JSON.parse(localStorage.getItem('carnet-seche:draft')||'null');if(!o)return;
+  if(!o.editId&&o.savedOn!==today()){o.date=today();o.draftStart='';(o.draft||[]).forEach(e=>(e.lines||[]).forEach(l=>{delete l.done;delete l.t;delete l.ts;delete l.pr;}));}
   draft=(o.draft||[]).map(normEx);editId=o.editId&&S.sessions.some(s=>s.id===o.editId)?o.editId:null;draftStart=o.draftStart||'';
   if(o.date)$('#s-date').value=o.date;$('#s-name').value=o.name||'';$('#s-note').value=o.note||'';selGroups=new Set(o.groups||[]);}catch(e){}}
 function renderPicks(){
@@ -927,7 +928,7 @@ function saveSession(){
     if(s){Object.assign(s,{date,name,groups,exercises,note});if(times.length){if(!s.start||times[0]<s.start)s.start=times[0];if(!s.end||times[times.length-1]>s.end)s.end=times[times.length-1];}}
     save();resetDraft();renderAfterSession();checkBadges();toast(prs.length?`Séance modifiée · record battu !`:'Séance modifiée');return;}
   const isToday=date===today();
-  const s={id:uid(),date,name,groups,exercises,note,start:draftStart||times[0]||(isToday?nowHM():''),end:isToday?nowHM():(times[times.length-1]||'')};
+  const s={id:uid(),date,name,groups,exercises,note,start:times[0]||draftStart||(isToday?nowHM():''),end:isToday?nowHM():(times[times.length-1]||'')};
   S.sessions.push(s);save();resetDraft();stopRest();renderAfterSession();showSummary(s,prs);checkBadges();
 }
 function resetDraft(){draft=[];editId=null;draftStart='';selGroups=new Set();$('#s-note').value='';$('#s-name').value='';$('#tpl-select').value='';$('#s-date').value=today();renderDraft();}
@@ -1024,7 +1025,7 @@ function wireDraft(){
   L.addEventListener('click',e=>{
     const box=e.target.closest('.ex');if(!box)return;const i=+box.dataset.i,ex=draft[i];
     const ok=e.target.closest('[data-ok]');if(ok){const l=ex.lines[+ok.dataset.ok];
-      if(l.done){l.done=false;l.t='';}else{l.done=true;l.t=nowHM();if(!draftStart)draftStart=l.t;haptic('strong');
+      if(l.done){l.done=false;l.t='';}else{l.done=true;l.t=nowHM();if(!draftStart||!draft.some(x=>x.lines.some(y=>y.done&&y!==l)))draftStart=l.t;haptic('strong');
         const b=bestEver(ex.name,editId);if(!cardioOf(ex.name)&&b>0&&num(l.kg)>b){confetti();toast('Nouveau record : '+fkg(num(l.kg))+' kg !');}else toast(pick(CHEERS)+' · '+l.t);
         if(!cardioOf(ex.name))startRest();}
       renderDraft();return;}
@@ -1709,7 +1710,7 @@ function renderGym(){
   paintIcons($('#gym-body'));renderGymTimer(RT.end?$('#rest-t').textContent:'');
 }
 function gymSet(){
-  const e=draft[gymI],c=cardioOf(e.name),j=gymLine(e),l=e.lines[j];l.ts=l.ts||[];const t=nowHM();if(!draftStart)draftStart=t;
+  const e=draft[gymI],c=cardioOf(e.name),j=gymLine(e),l=e.lines[j];l.ts=l.ts||[];const t=nowHM();if(!draftStart||!draft.some(x=>x.lines.some(y=>y.done||(y.ts&&y.ts.length))))draftStart=t;
   if(c){l.done=true;l.t=t;toast(pick(CHEERS));haptic('strong');renderGym();saveDraft();return;}
   l.ts.push(t);
   const b=bestEver(e.name,editId);if(b>0&&num(l.kg)>b&&!l.pr){l.pr=1;confetti();toast('Nouveau record : '+fkg(num(l.kg))+' kg !');}
@@ -1865,7 +1866,10 @@ let startTab='today';try{startTab=sessionStorage.getItem('cs-tab')||'today';}cat
 go(startTab==='profil'?'today':startTab);
 checkBadges(true);routeHash();
 syConnect();
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderToday();});
+let lastDay=today();
+document.addEventListener('visibilitychange',()=>{if(document.hidden)return;
+  if(lastDay!==today()){lastDay=today();if(!editId&&!draft.some(e=>e.lines.some(l=>l.done||(l.ts&&l.ts.length)))){$('#s-date').value=today();draftStart='';saveDraft();}$('#w-date').value=today();}
+  renderToday();});
 })();
 if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}
 </script>
