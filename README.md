@@ -5,3 +5,6 @@ Application mobile (PWA) de suivi de perte de gras : profil et besoins calorique
 Aucun serveur : les données restent sur le téléphone. Une sauvegarde/restauration est disponible dans l'onglet Profil.
 
 Installation sur iPhone : ouvrir le site GitHub Pages dans Safari, Partager, puis « Sur l'écran d'accueil ».
+
+
+Photos des exercices : [Free Exercise DB](https://github.com/yuhonas/free-exercise-db), domaine public (Unlicense).

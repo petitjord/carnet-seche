@@ -139,12 +139,17 @@ button:active{transform:scale(.98)}
 .exv .prop{fill:var(--line)}.exv .propl{stroke:var(--line);stroke-width:2.5;stroke-linecap:round}.exv .floor{stroke:var(--line);stroke-width:1.5}
 .exv.sm{width:62px;height:62px;border-radius:12px}
 .exlist .exv.sm{width:72px;height:72px}.exv.xs{width:26px;height:26px;border:none;background:none;border-radius:0;margin:-4px 0}
+.exv.ph{background:#fff;border-color:var(--line)}.exv.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.exv.ph.none{background:var(--sunken);display:grid;place-items:center;color:var(--muted);font-size:22px}.exv.ph.xs.none{font-size:14px}
+.exv.xs.ph{border-radius:6px;border:1px solid var(--line);margin:-2px 0}
+.exv2{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}.exv2 figure{margin:0;display:flex;flex-direction:column;gap:4px}
+.exv2 img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:14px;background:#fff;border:1px solid var(--line)}.exv2 figcaption{font-size:12px;color:var(--muted);text-align:center;font-weight:600}
 .chip .exv .lim,.chip .exv .lim2{stroke:currentColor}.chip .exv .head{fill:currentColor}.chip .exv .floor,.chip .exv .prop,.chip .exv .propl{display:none}
 .exli{display:flex;align-items:center;gap:10px;min-width:0}.exli .grow{flex:1;min-width:0;font-weight:600;font-size:14px}.exli small{color:var(--muted);font-size:12px;white-space:nowrap}
 .exlist{display:flex;flex-direction:column;gap:8px}
 .exgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .exsugg{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:8px;text-align:left;background:var(--surface);border-radius:12px}
-.exsugg .exv{width:100%;height:auto;aspect-ratio:1/1;max-width:100%}
+.exsugg .exv{width:100%;height:auto;aspect-ratio:3/2;max-width:100%}
 .exsugg b{font-size:13px;line-height:1.2}.exsugg small{color:var(--muted);font-size:11px;font-weight:500;display:flex;align-items:center;gap:4px}
 .exnm{display:flex;gap:10px;align-items:center}.exnm input{flex:1;min-width:0}
 .prog-sess summary{list-style:none;cursor:pointer}.prog-sess summary::-webkit-details-marker{display:none}
@@ -291,7 +296,6 @@ small.down{color:var(--good)}small.up{color:var(--bad)}
     <div class="card coach" id="today-coach"></div>
     <div class="card" id="today-kcal"></div>
     <div class="card" id="today-goal"></div>
-    <div class="card" id="review-card"></div>
   </section>
 
   <!-- PROFIL -->
@@ -956,7 +960,7 @@ function showSummary(s,prs){
   const ex=s.exercises,vol=ex.reduce((t,e)=>t+exVol(e),0),sets=ex.reduce((t,e)=>t+exSets(e),0),kc=ex.reduce((t,e)=>t+exKcal(e),0),dur=durMin(s.start,s.end);
   $('#done-body').innerHTML=`<div class="kicker2">${ic('trophy')}Séance n°${S.sessions.length}${s.start?` · ${s.start}${s.end&&s.end!==s.start?' → '+s.end:''}`:''}</div>
    <h2 class="donet">${esc(pick(FINISH))}</h2>
-   <div class="grid2">${dur?tile('history','Durée',dur+' min'):''}${tile('dumbbell','Exercices',ex.length)}${sets?tile('repeat','Séries',sets):''}${vol?tile('scale','Volume',fmt(vol)+' kg'):''}${kc?tile('flame','Cardio',fmt(kc)+' kcal'):''}</div>
+   <div class="grid2">${dur?tile('history','Durée',dur+' min'):''}${tile('dumbbell','Exercices',ex.length)}${sets?tile('repeat','Séries',sets):''}${kc?tile('flame','Cardio',fmt(kc)+' kcal'):''}</div>
    ${prs.length?`<div class="tip"><p><b>${prs.length} record${prs.length>1?'s':''} battu${prs.length>1?'s':''} !</b> ${prs.map(p=>esc(p.name)+' à '+fkg(p.kg)+' kg').join(', ')}</p></div>`:''}
    <p class="muted" style="margin:0">${esc(pick(POST))}</p>`;
   $('#done-modal').hidden=false;haptic('strong');if(prs.length)setTimeout(confetti,250);
@@ -1012,7 +1016,7 @@ function renderSessions(){
     return `<details class="li session" style="display:block">
       <summary><span class="tag">${d.getDate()}<small>${d.toLocaleDateString('fr-FR',{month:'short'}).replace('.','')}</small></span>
         <span style="flex:1;min-width:0"><span style="font-weight:700">${esc(s.name||d.toLocaleDateString('fr-FR',{weekday:'long'}))}</span><br>
-        <span class="small muted">${when}${ex.length} exercice(s)${vol?` · ${fmt(vol)} kg`:''}${kc?` · ${fmt(kc)} kcal`:''}</span>${sessionGroups(s).length?`<span class="gtags">${sessionGroups(s).map(g=>`<span>${GROUPS[g]}</span>`).join('')}</span>`:''}</span>${ic('chev','chev')}</summary>
+        <span class="small muted">${when}${ex.length} exercice(s)${kc?` · ${fmt(kc)} kcal`:''}</span>${sessionGroups(s).length?`<span class="gtags">${sessionGroups(s).map(g=>`<span>${GROUPS[g]}</span>`).join('')}</span>`:''}</span>${ic('chev','chev')}</summary>
       ${ex.length?`<div style="overflow-x:auto"><table><tr><th>Exercice</th><th class="n">Détail</th><th class="n">Heure</th></tr>${ex.map(e=>e.lines.map((l,j)=>`<tr>${j===0?`<td rowspan="${e.lines.length}"><button type="button" class="exlink" data-exh="${esc(e.name)}"><span class="exli">${EXV.svg(e.name,'xs')}${esc(e.name)}</span></button></td>`:''}<td class="n num">${lineTxt(e.name,l)}</td><td class="n num muted">${esc(l.t||'')}</td></tr>`).join('')).join('')}</table></div>`:''}
       ${s.note?`<p class="small muted" style="margin:8px 0 0">${esc(s.note)}</p>`:''}
       <div class="row" style="justify-content:space-between;margin-top:10px"><div class="row"><button type="button" data-edit="${s.id}">${ic('pen')}Modifier</button>${ex.length?`<button type="button" data-rep="${s.id}">${ic('repeat')}Refaire</button>`:''}</div><button type="button" class="btn-ghost btn-danger" data-del-s="${s.id}">Supprimer</button></div>
@@ -1204,6 +1208,15 @@ function svg(name,cls=''){
 return {svg,guess,ids:Object.keys(X)};
 })();
 
+/* ---------- PHOTOS D'EXERCICES (Free Exercise DB, domaine public) ---------- */
+const PHOTO={"développé couché": "barbell-bench-press---medium-grip", "développé couché haltères": "dumbbell-bench-press", "développé incliné haltères": "incline-dumbbell-press", "chest press": "leverage-chest-press", "pec deck (butterfly)": "butterfly", "écarté poulie": "cable-crossover", "pompes": "pushups", "pompes inclinées": "incline-push-up", "dips": "dips---chest-version", "dips assistés": "dip-machine", "dips sur chaise": "bench-dips", "tractions": "pullups", "tractions assistées": "band-assisted-pull-up", "tirage vertical": "wide-grip-lat-pulldown", "tirage vertical prise serrée": "close-grip-front-lat-pulldown", "rowing barre": "bent-over-barbell-row", "rowing haltère": "one-arm-dumbbell-row", "tirage horizontal poulie": "seated-cable-rows", "rowing poulie assis": "seated-cable-rows", "rowing machine": "leverage-iso-row", "pull-over poulie": "straight-arm-pulldown", "lombaires (extension au banc)": "hyperextensions-back-extensions", "soulevé de terre": "barbell-deadlift", "soulevé de terre roumain": "romanian-deadlift", "développé militaire": "standing-military-press", "shoulder press machine": "leverage-shoulder-press", "élévations latérales": "side-lateral-raise", "élévations latérales poulie": "cable-seated-lateral-raise", "oiseau": "reverse-flyes", "face pull": "face-pull", "curl haltères": "dumbbell-bicep-curl", "curl barre": "barbell-curl", "curl marteau": "hammer-curls", "curl pupitre": "preacher-curl", "curl poulie": "standing-biceps-cable-curl", "extension triceps poulie": "triceps-pushdown---rope-attachment", "barre au front": "ez-bar-skullcrusher", "extension triceps haltère au-dessus de la tête": "standing-dumbbell-triceps-extension", "squat": "barbell-squat", "squat guidé (smith)": "smith-machine-squat", "hack squat": "hack-squat", "goblet squat": "goblet-squat", "squat au poids du corps": "bodyweight-squat", "presse à cuisses": "leg-press", "fentes": "dumbbell-lunges", "fentes arrière": "dumbbell-rear-lunge", "fentes marchées": "bodyweight-walking-lunge", "fentes bulgares": "split-squat-with-dumbbells", "leg extension": "leg-extensions", "leg curl": "lying-leg-curls", "leg curl assis": "seated-leg-curl", "mollets debout": "standing-calf-raises", "mollets assis": "seated-calf-raise", "adducteurs machine": "thigh-adductor", "abducteurs machine": "thigh-abductor", "hip thrust": "barbell-hip-thrust", "pont fessier": "butt-lift-bridge", "kickback poulie": "glute-kickback", "kettlebell swing": "one-arm-kettlebell-swings", "gainage planche (s)": "plank", "gainage planche": "plank", "gainage latéral (s)": "side-bridge", "crunch à la poulie": "cable-crunch", "crunch machine": "ab-crunch-machine", "relevés de jambes": "hanging-leg-raise", "relevés de jambes au sol": "flat-bench-lying-leg-raise", "russian twist": "russian-twist", "marche inclinée": "walking-treadmill", "course sur tapis": "running-treadmill", "vélo": "bicycling-stationary", "elliptique": "elliptical-trainer", "rameur": "rowing-stationary"};
+const POSE2PHOTO={};Object.entries(PHOTO).forEach(([n,sl])=>{const g=EXV.guess(n);if(g&&!POSE2PHOTO[g])POSE2PHOTO[g]=sl;});
+const photoOf=n=>PHOTO[key(n)]||POSE2PHOTO[EXV.guess(n)]||null;
+EXV.svg=(name,cls='')=>{const sl=photoOf(name);
+  if(!sl)return `<span class="exv ph none ${cls}" aria-hidden="true">${ic('dumbbell')}</span>`;
+  if(cls==='xl')return `<span class="exv2"><figure><img src="ex/${sl}-0.jpg" alt="Position de départ" decoding="async"><figcaption>Départ</figcaption></figure><figure><img src="ex/${sl}-1.jpg" alt="Position d'arrivée" decoding="async"><figcaption>Arrivée</figcaption></figure></span>`;
+  return `<span class="exv ph ${cls}" aria-hidden="true"><img src="ex/${sl}-0.jpg" alt="" loading="lazy" decoding="async"></span>`;};
+
 /* ---------- MUSCLES, PROGRAMMES, COACH ---------- */
 const GROUPS={pecs:'Pecs',dos:'Dos',epaules:'Épaules',biceps:'Biceps',triceps:'Triceps',jambes:'Jambes',fessiers:'Fessiers',abdos:'Abdos',cardio:'Cardio'};
 const GORDER=Object.keys(GROUPS);
@@ -1386,7 +1399,7 @@ function renderToday(){
     return `<div class="${isDone?'done':plan?'plan':''} ${iso===today()?'today':''}"><b>${d.slice(0,2)}</b>${isDone?ic('check'):plan?ic('dumbbell'):'<span>'+day.getDate()+'</span>'}</div>`;}).join('');
   const isPlan=S.profile.jours.includes(dow(now)),doneToday=done.has(today());
   const totV=S.sessions.reduce((t,s)=>t+(s.exercises||[]).reduce((a,e)=>a+exVol(e),0),0),totK=S.sessions.reduce((t,s)=>t+(s.exercises||[]).reduce((a,e)=>a+exKcal(e),0),0);
-  $('#week-note').innerHTML=esc(`${nDone} séance(s) faite(s) sur ${S.profile.jours.length} prévue(s). `+(doneToday?'Séance du jour validée, bravo !':isPlan?'Séance prévue aujourd’hui : go !':'Jour de repos : vise tes pas.'))+(S.sessions.length?`<br><b style="color:var(--ink)">Depuis le début</b> : ${S.sessions.length} séance${S.sessions.length>1?'s':''}${totV?` · ${fmt(totV)} kg soulevés`:''}${totK?` · ${fmt(totK)} kcal de cardio`:''}`:'');
+  $('#week-note').textContent=`${nDone} séance(s) faite(s) sur ${S.profile.jours.length} prévue(s). `+(doneToday?'Séance du jour validée, bravo !':isPlan?'Séance prévue aujourd’hui : go !':'Jour de repos : récupère bien.');
   renderCoach();applyLook();renderChallenges();renderReview();renderBadges();
   const c=calc();
   $('#today-kcal').innerHTML=c?`<h3><span class="hi" data-ic="flame"></span>Objectif du jour</h3>
