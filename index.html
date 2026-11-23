@@ -238,6 +238,14 @@ body.noscroll{overflow:hidden}
 .gbig{font-size:26px!important;padding:20px!important;border-radius:18px}
 .gnav button{padding:14px}.ic.flip{transform:rotate(180deg)}
 .gymbtn{border-color:var(--coral);color:var(--coral);font-weight:700}
+.subp{display:flex;flex-direction:column;gap:16px}.subp[hidden]{display:none}
+.subtabs{position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:4;box-shadow:0 8px 18px -10px rgba(0,0,0,.7)}.subtabs button{font-weight:700;font-size:14px;padding:10px 2px}
+.gymtop{padding:14px;font-size:16px}
+.nsmore{border:1px solid var(--line);border-radius:14px;background:var(--sunken)}.nsmore summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px}.nsmore summary::-webkit-details-marker{display:none}
+.nsmore .chev{color:var(--muted);transition:transform .2s}.nsmore[open] .chev{transform:rotate(90deg)}.nsmore .nsin{display:flex;flex-direction:column;gap:14px;padding:0 12px 12px}
+.splan{display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;background:var(--coral-soft);color:var(--ink)}.splan .grow{flex:1;min-width:0}.splan button{flex:none;padding:10px 14px}
+.prog{border:1px solid var(--line);border-radius:14px;background:var(--sunken)}.prog>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px}.prog>summary::-webkit-details-marker{display:none}.prog>summary .grow,.nsmore summary .grow{flex:1;min-width:0}
+.prog>summary .chev{color:var(--muted);transition:transform .2s}.prog[open]>summary .chev{transform:rotate(90deg)}.prog .pin{display:flex;flex-direction:column;gap:10px;padding:0 12px 12px}
 .toast{max-width:calc(100vw - 32px);white-space:normal!important;text-align:center;border-radius:18px}
 /* superset, ressenti */
 .ex.ss-a{border-bottom-left-radius:4px;border-bottom-right-radius:4px;margin-bottom:-6px;border-left-color:var(--pink)}
@@ -419,37 +427,53 @@ small.down{color:var(--good)}small.up{color:var(--bad)}
   <!-- SÉANCES -->
   <section class="panel wrap" id="p-train" style="width:100%" hidden>
     <h2>Mes <span class="grad">séances</span></h2>
-    <div class="card" id="plan-card"></div>
-    <div class="card" id="prog-card"></div>
+    <div class="subtabs seg" id="train-tabs" role="tablist">
+      <button type="button" data-sub="seance">Séance</button><button type="button" data-sub="plan">Planning</button><button type="button" data-sub="suivi">Suivi</button><button type="button" data-sub="hist">Historique</button>
+    </div>
+    <div class="subp" data-subp="seance">
     <div class="card" id="new-session">
       <h3><span class="hi orange" data-ic="dumbbell"></span><span id="ns-title">Nouvelle séance</span></h3>
       <div id="edit-banner" hidden></div>
-      <div class="row">
-        <div class="field grow"><label for="s-date">Date</label><input id="s-date" type="date"></div>
-        <div class="field grow"><label for="s-name">Nom (facultatif)</label><input id="s-name" list="session-names" placeholder="Haut du corps"></div>
-      </div>
-      <div class="field"><span class="flab"><span data-ic="target"></span>Muscles travaillés</span>
-        <div class="chips open" id="groups"></div>
-        <div id="pair-tip"></div></div>
-      <div class="field" id="tpl-field" hidden><label for="tpl-select"><span data-ic="bookmark"></span>Partir d'une séance type</label>
-        <select id="tpl-select"></select></div>
+      <div id="sess-plan"></div>
+      <button type="button" class="gymbtn gymtop" id="gym-open"><span data-ic="bolt"></span>Mode salle (plein écran)</button>
+      <div id="ex-list" style="display:flex;flex-direction:column;gap:10px"></div>
+      <button type="button" id="ex-add"><span data-ic="plus"></span>Nouvel exercice</button>
       <div class="field" id="pick-field" hidden>
         <span class="flab"><span data-ic="repeat"></span>Reprendre un exercice déjà fait</span>
         <input id="pick-filter" type="search" placeholder="Rechercher…" autocomplete="off">
         <div class="chips" id="picks"></div>
       </div>
-      <div id="ex-list" style="display:flex;flex-direction:column;gap:10px"></div>
-      <button type="button" id="ex-add"><span data-ic="plus"></span>Nouvel exercice</button>
-      <div class="field"><label for="s-note"><span data-ic="pen"></span>Notes (ressenti, cardio, pas…)</label><textarea id="s-note" rows="2" placeholder="Bonne énergie, 9 500 pas"></textarea></div>
-      <button type="button" class="gymbtn" id="gym-open"><span data-ic="bolt"></span>Mode salle (plein écran)</button>
+      <div class="field" id="tpl-field" hidden><label for="tpl-select"><span data-ic="bookmark"></span>Partir d'une séance type</label>
+        <select id="tpl-select"></select></div>
+      <details class="nsmore" id="ns-more"><summary><span data-ic="pen"></span><span class="grow"><b>Détails</b><br><span class="small muted" id="ns-sum"></span></span><span data-ic="chev" class="chev"></span></summary>
+        <div class="nsin">
+        <div class="row">
+          <div class="field grow"><label for="s-date">Date</label><input id="s-date" type="date"></div>
+          <div class="field grow"><label for="s-name">Nom (facultatif)</label><input id="s-name" list="session-names" placeholder="Haut du corps"></div>
+        </div>
+        <div class="field"><span class="flab"><span data-ic="target"></span>Muscles travaillés</span>
+          <div class="chips open" id="groups"></div>
+          <div id="pair-tip"></div></div>
+        <div class="field"><label for="s-note"><span data-ic="pen"></span>Notes (ressenti, cardio, pas…)</label><textarea id="s-note" rows="2" placeholder="Bonne énergie, 9 500 pas"></textarea></div>
+        </div>
+      </details>
       <button class="btn-primary" id="s-save" type="button"><span data-ic="check"></span><span id="s-save-l">Enregistrer la séance</span></button>
       <button type="button" id="tpl-save"><span data-ic="bookmark"></span>Enregistrer comme séance type</button>
     </div>
+    </div>
+    <div class="subp" data-subp="plan" hidden>
+    <div class="card" id="plan-card"></div>
+    <div class="card" id="prog-card"></div>
+    <div class="card" id="tpl-card" hidden><h3><span class="hi gold" data-ic="bookmark"></span>Mes séances types</h3><div class="list" id="tpl-list"></div></div>
+    </div>
+    <div class="subp" data-subp="suivi" hidden>
     <div class="card" id="cal-card"></div>
     <div class="card" id="bal-card"></div>
     <div class="card" id="progress-card"></div>
-    <div class="card" id="tpl-card" hidden><h3><span class="hi gold" data-ic="bookmark"></span>Mes séances types</h3><div class="list" id="tpl-list"></div></div>
-    <div class="card"><h3><span class="hi violet" data-ic="history"></span>Historique</h3><div class="list" id="s-list"></div></div>
+    </div>
+    <div class="subp" data-subp="hist" hidden>
+    <div class="card"><h3><span class="hi violet" data-ic="history"></span>Historique</h3><input id="s-search" type="search" placeholder="Rechercher une séance, un exercice, une date…" autocomplete="off"><div class="list" id="s-list"></div></div>
+    </div>
   </section>
 </div>
 
@@ -979,7 +1003,7 @@ function renderDraft(){
     <div class="row" style="justify-content:space-between"><button type="button" class="addline" data-addl="${i}">${ic('plus')}${c?'Autre réglage':'Ligne (autre charge)'}</button>${kc?`<span class="pill gold">${ic('flame')}≈ ${fmt(kc)} kcal</span>`:''}</div>
     ${canSS?`<button type="button" class="sslink ${ssA?'on':''}" data-ss="${i}">${ic('link')}${ssA?'Superset avec l’exercice suivant (activé)':'Superset avec l’exercice suivant'}</button>`:''}
   </div>`;}).join('');
-  renderPicks();renderGroups();renderEditBanner();saveDraft();
+  renderPicks();renderGroups();renderEditBanner();renderSessPlan();saveDraft();
 }
 function cleanDraft(){return draft.filter(e=>e.name.trim()).map(e=>{const c=cardioOf(e.name);
   return {name:e.name.trim(),...(e.ss&&!c?{ss:true}:{}),lines:e.lines.map(l=>{const o=c?{incl:num(l.incl)||0,speed:num(l.speed)||0,min:num(l.min)||0}:{kg:num(l.kg)||0,sets:parseInt(l.sets)||0,reps:parseInt(l.reps)||0};if(l.done&&l.t)o.t=l.t;if(l.ts&&l.ts.length)o.ts=l.ts.slice();if(!c&&l.feel)o.feel=l.feel;if(!c&&l.fs&&l.fs.some(Boolean))o.fs=l.fs.slice();return o;})};});}
@@ -1032,13 +1056,13 @@ function loadTemplate(id){
 function repeatSession(id){
   const s=S.sessions.find(x=>x.id===id);if(!s)return;editId=null;draftStart='';
   draft=(s.exercises||[]).map(e=>({name:e.name,...(e.ss?{ss:true}:{}),lines:e.lines.map(stripLine)}));$('#s-name').value=s.name||'';selGroups=new Set(sessionGroups(s));$('#s-date').value=today();
-  renderDraft();$('#new-session').scrollIntoView({behavior:'smooth',block:'start'});toast('Séance reprise : ajuste et valide tes séries');
+  renderDraft();seanceView({behavior:'smooth',block:'start'});toast('Séance reprise : ajuste et valide tes séries');
 }
 function startEdit(id){
   const s=S.sessions.find(x=>x.id===id);if(!s)return;editId=id;draftStart=s.start||'';
   draft=(s.exercises||[]).map(e=>({name:e.name,...(e.ss?{ss:true}:{}),lines:e.lines.map(l=>({...l,done:!!l.t}))}));
   $('#s-date').value=s.date;$('#s-name').value=s.name||'';$('#s-note').value=s.note||'';selGroups=new Set(sessionGroups(s));
-  renderDraft();go('train');setTimeout(()=>$('#new-session').scrollIntoView({behavior:'smooth',block:'start'}),60);
+  renderDraft();go('train');setSub('seance');setTimeout(()=>{$('#ns-more').open=true;$('#new-session').scrollIntoView({behavior:'smooth',block:'start'});},60);
 }
 function renderEditBanner(){
   const b=$('#edit-banner');
@@ -1054,7 +1078,9 @@ function renderNames(){
   $('#ex-names').innerHTML=[...ex].sort((a,b)=>a.localeCompare(b,'fr')).map(n=>`<option value="${esc(n)}">`).join('');
 }
 function renderSessions(){
-  const ss=S.sessions.slice().sort((a,b)=>a.date===b.date?((a.start||'')<(b.start||'')?1:-1):a.date<b.date?1:-1);
+  const nz=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''),q=nz(($('#s-search')||{}).value||'').trim();
+  const ss=S.sessions.slice().sort((a,b)=>a.date===b.date?((a.start||'')<(b.start||'')?1:-1):a.date<b.date?1:-1).filter(s=>!q||q.split(/\s+/).every(w=>nz([s.name,s.note,s.date,parse(s.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}),...(s.exercises||[]).map(e=>e.name),...sessionGroups(s).map(g=>GROUPS[g])].join(' ')).includes(w)));
+  if(q&&!ss.length){$('#s-list').innerHTML=`<div class="small muted">Aucune séance trouvée.</div>`;return;}
   if(!ss.length){$('#s-list').innerHTML=`<div class="empty"><span class="eico">${ic('dumbbell')}</span><strong>Aucune séance</strong>Ajoute tes exercices ci-dessus et enregistre ta première séance.</div>`;return;}
   $('#s-list').innerHTML=ss.map(s=>{const ex=s.exercises||[],vol=ex.reduce((t,e)=>t+exVol(e),0),kc=ex.reduce((t,e)=>t+exKcal(e),0),d=parse(s.date),dur=durMin(s.start,s.end);
     const when=s.start?`${s.start}${s.end&&s.end!==s.start?' → '+s.end:''}${dur?` (${dur} min)`:''} · `:'';
@@ -1335,7 +1361,7 @@ function planName(v){if(!v)return '';if(v.startsWith('tpl:')){const t=S.template
   const [pid,i]=v.split(':'),p=PROGRAMS.find(x=>x.id===pid),ss=p&&p.sessions[+i];return ss?ss.name:'';}
 function planGroups(v){if(!v)return [];if(v.startsWith('tpl:')){const t=S.templates.find(x=>x.id===v.slice(4));return t?[...new Set(t.exercises.map(e=>primaryGroup(e.name)).filter(Boolean))]:[];}
   const [pid,i]=v.split(':'),p=PROGRAMS.find(x=>x.id===pid),ss=p&&p.sessions[+i];return ss?(ss.groups||[...new Set(ss.ex.map(primaryGroup).filter(Boolean))]):[];}
-function loadPlan(v){if(!v)return;if(v.startsWith('tpl:')){editId=null;draftStart='';loadTemplate(v.slice(4));$('#s-date').value=today();go('train');$('#new-session').scrollIntoView({behavior:'smooth',block:'start'});toast('Séance « '+planName(v)+' » prête');}
+function loadPlan(v){if(!v)return;if(v.startsWith('tpl:')){editId=null;draftStart='';loadTemplate(v.slice(4));$('#s-date').value=today();seanceView({behavior:'smooth',block:'start'});toast('Séance « '+planName(v)+' » prête');}
   else{const [pid,i]=v.split(':');loadProgramSession(pid,+i);}}
 function planAdvice(){
   const P=planMap(),J=S.profile.jours;if(!J.some(d=>planName(P[d])))return null;
@@ -1400,19 +1426,17 @@ function loadProgramSession(pid,idx){
   const p=PROGRAMS.find(x=>x.id===pid),ss=p&&p.sessions[idx];if(!ss)return;
   draft=ss.ex.map(n=>rowFrom(n,libFallback(n)));$('#s-name').value=ss.name;$('#s-date').value=today();
   selGroups=new Set(ss.groups||ss.ex.map(primaryGroup).filter(Boolean));
-  renderDraft();go('train');$('#new-session').scrollIntoView({behavior:'smooth',block:'start'});toast('Séance « '+ss.name+' » prête');
+  renderDraft();seanceView({behavior:'smooth',block:'start'});toast('Séance « '+ss.name+' » prête');
 }
 function renderPrograms(){
-  const p=PROGRAMS.find(x=>x.id===progSel)||PROGRAMS[0];
   const el=$('#prog-card');
-  el.innerHTML=`<h3><span class="hi" data-ic="bookmark"></span>Programmes</h3>
-   <div class="chips open">${PROGRAMS.map(x=>`<button type="button" class="chip ${x.id===p.id?'added':''}" data-prog="${x.id}">${esc(x.name)}</button>`).join('')}</div>
-   <div class="stat"><span class="label">${ic('calendar')}${esc(p.freq)}</span><span>${esc(p.desc)}</span></div>
-   ${p.sessions.map((ss,i)=>{const gs=ss.groups||[...new Set(ss.ex.map(primaryGroup).filter(Boolean))];return `<details class="prog-sess" ${i===0?'open':''}>
+  el.innerHTML=`<h3><span class="hi" data-ic="bookmark"></span>Programmes</h3>`+PROGRAMS.map(p=>`<details class="prog"><summary><span class="grow"><b>${esc(p.name)}</b><br><span class="small muted">${esc(p.freq)}</span></span>${ic('chev','chev')}</summary><div class="pin">
+   <div class="small muted">${esc(p.desc)}</div>
+   ${p.sessions.map((ss,i)=>{const gs=ss.groups||[...new Set(ss.ex.map(primaryGroup).filter(Boolean))];return `<details class="prog-sess">
      <summary class="row" style="justify-content:space-between;align-items:center"><div class="grow"><div style="font-weight:700">${esc(ss.name)} <span class="small muted">· ${ss.ex.length} exercices</span></div><div class="gtags">${gs.map(g=>`<span>${GROUPS[g]}</span>`).join('')}</div></div>${ic('chev','chev')}</summary>
      <div class="exlist">${ss.ex.map(n=>{const f=libFallback(n);return `<div class="exli">${EXV.svg(n,'sm')}<span class="grow">${esc(n)}</span>${cardioOf(n)?`<small>${cardioOf(n).def.min} min</small>`:f?`<small>${f.sets} × ${f.reps}${/\(s\)/.test(n)?' s':''}</small>`:''}</div>`;}).join('')}</div>
      <button type="button" class="btn-primary" data-load="${p.id}:${i}">${ic('dumbbell')}Faire cette séance</button></details>`;}).join('')}
-   <div class="note">${ic('info')}<span>${esc(p.tip)}</span></div>`;
+   <div class="note">${ic('info')}<span>${esc(p.tip)}</span></div></div></details>`).join('');
   paintIcons(el);
 }
 function renderGroups(){
@@ -2007,7 +2031,7 @@ function wirePhotos(){
 }
 
 /* ---------- RACCOURCIS (#salle, #train, #poids…) ---------- */
-function routeHash(){const h=(location.hash||'').slice(1);if(h==='salle'){go('train');setTimeout(openGym,200);}else if(['today','train','poids'].includes(h))go(h);else if(h==='reglages')go('profil');}
+function routeHash(){const h=(location.hash||'').slice(1);if(h==='salle'){go('train');setSub('seance');setTimeout(openGym,200);}else if(['today','train','poids'].includes(h))go(h);else if(h==='reglages')go('profil');}
 
 /* ---------- SUIVI : CALENDRIER, ÉQUILIBRE, HISTORIQUE PAR EXERCICE, STAGNATION ---------- */
 const GCOL={pecs:'#FF5A5F',dos:'#4DA3FF',epaules:'#B07CFF',biceps:'#FF9F43',triceps:'#FFC22E',jambes:'#3EE6A0',fessiers:'#FF6FB5',abdos:'#9AA3B2',cardio:'#5CE1E6'};
@@ -2108,6 +2132,14 @@ function go(tab){
   try{sessionStorage.setItem('cs-tab',tab);}catch(e){}
   window.scrollTo(0,0);
 }
+let curSub='seance';try{curSub=localStorage.getItem('cs-sub')||'seance';}catch(e){}
+function setSub(k){curSub=k;document.querySelectorAll('[data-subp]').forEach(d=>d.hidden=d.dataset.subp!==k);document.querySelectorAll('[data-sub]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sub===k)));try{localStorage.setItem('cs-sub',k);}catch(e){}}
+function seanceView(o){go('train');setSub('seance');$('#new-session').scrollIntoView(o);}
+function renderSessPlan(){const el=$('#sess-plan');if(!el)return;const d=dow(new Date()),v=planMap()[d],has=draft.some(e=>e.name.trim());
+  const sum=$('#ns-sum');if(sum){const dt=parse($('#s-date').value||today());sum.textContent=[dt.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}),$('#s-name').value.trim(),[...selGroups].map(g=>GROUPS[g]).join(', ')].filter(Boolean).join(' · ');}
+  if(has||editId){el.innerHTML='';return;}
+  el.innerHTML=S.profile.jours.includes(d)&&planName(v)?`<div class="splan">${ic('calendar')}<span class="grow"><span class="small muted">Au planning aujourd’hui</span><br><b>${esc(planName(v))}</b></span><button type="button" class="btn-primary" data-plan="${v}">Charger</button></div>`
+    :`<div class="small muted">Choisis une séance dans <a href="#" data-sub-go="plan">Planning</a>, reprends un exercice déjà fait ou ajoute tes exercices.</div>`;}
 function renderAll(){renderPlan();renderCalendar();renderBalance();renderProgress();renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderDraft();renderToday();renderSync();}
 function renderRemote(){renderPlan();renderCalendar();renderBalance();renderProgress();renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderPicks();renderGroups();renderToday();}
 
@@ -2131,6 +2163,11 @@ $('#picks').addEventListener('click',e=>{const b=e.target.closest('[data-pick]')
   if(i>=0)draft.splice(i,1);else draft.push(rowFrom(n,libFallback(n)));
   renderDraft();});
 $('#ex-add').addEventListener('click',()=>{draft.push({name:'',lines:[{kg:'',sets:3,reps:10}]});renderDraft();$('#ex-n-'+(draft.length-1))?.focus();});
+document.querySelectorAll('[data-sub]').forEach(b=>b.addEventListener('click',()=>{setSub(b.dataset.sub);window.scrollTo(0,0);}));
+document.addEventListener('click',e=>{const a=e.target.closest('[data-sub-go]');if(!a)return;e.preventDefault();setSub(a.dataset.subGo);window.scrollTo(0,0);});
+$('#s-search').addEventListener('input',renderSessions);
+['#s-date','#s-name'].forEach(x=>$(x).addEventListener('input',renderSessPlan));
+setSub(curSub);
 loadDraft();wirePlan();wireTimer();wireDraft();wireSync();wireGym();wireCalendar();wireBalance();wireExHistory();
 $('#gym-open').addEventListener('click',openGym);
 
@@ -2142,7 +2179,7 @@ applyTheme();
 document.querySelectorAll('[data-close-settings]').forEach(b=>b.addEventListener('click',()=>go(prevTab)));
 $('#s-save').addEventListener('click',saveSession);
 ['font','logo','qbg','color','theme','haptics','rest','stepsGoal','waterGoal'].forEach(k=>$('#ui-'+k).addEventListener('change',e=>{S.prefs[k]=e.target.value;save();applyLook();renderChallenges();}));
-$('#groups').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;const g=b.dataset.g;selGroups.has(g)?selGroups.delete(g):selGroups.add(g);renderGroups();});
+$('#groups').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;const g=b.dataset.g;selGroups.has(g)?selGroups.delete(g):selGroups.add(g);renderGroups();renderSessPlan();saveDraft();});
 $('#pair-tip').addEventListener('click',e=>{
   const a=e.target.closest('[data-addg]');if(a){selGroups.add(a.dataset.addg);renderGroups();return;}
   const s=e.target.closest('[data-sugg]');if(s){const n=s.dataset.sugg;draft.push(rowFrom(n,libFallback(n)));renderDraft();}
