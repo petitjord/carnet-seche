@@ -419,7 +419,6 @@ small.down{color:var(--good)}small.up{color:var(--bad)}
   <!-- SÉANCES -->
   <section class="panel wrap" id="p-train" style="width:100%" hidden>
     <h2>Mes <span class="grad">séances</span></h2>
-    <div class="card coach" id="train-coach"></div>
     <div class="card" id="plan-card"></div>
     <div class="card" id="prog-card"></div>
     <div class="card" id="new-session">
@@ -445,12 +444,6 @@ small.down{color:var(--good)}small.up{color:var(--bad)}
       <button type="button" class="gymbtn" id="gym-open"><span data-ic="bolt"></span>Mode salle (plein écran)</button>
       <button class="btn-primary" id="s-save" type="button"><span data-ic="check"></span><span id="s-save-l">Enregistrer la séance</span></button>
       <button type="button" id="tpl-save"><span data-ic="bookmark"></span>Enregistrer comme séance type</button>
-    </div>
-    <div class="card" id="plate-card">
-      <h3><span class="hi" data-ic="disc"></span>Calculateur de disques</h3>
-      <div class="row"><div class="field grow"><label for="pc-kg">Charge totale (kg)</label><input id="pc-kg" type="text" inputmode="decimal" placeholder="72,5" autocomplete="off"></div>
-        <div class="field grow"><label for="pc-bar">Barre</label><select id="pc-bar"><option value="20">Olympique 20 kg</option><option value="15">Technique 15 kg</option><option value="10">EZ / courte 10 kg</option><option value="7">EZ légère 7 kg</option><option value="0">Sans barre (machine)</option></select></div></div>
-      <div id="pc-out"></div>
     </div>
     <div class="card" id="cal-card"></div>
     <div class="card" id="bal-card"></div>
@@ -1401,7 +1394,7 @@ function renderCoach(){
   const a=coachAdvice();
   const doy=Math.floor((new Date()-new Date(new Date().getFullYear(),0,0))/864e5);
   const h=`<h3><span class="hi gold" data-ic="star"></span>Conseil du coach</h3><p>${a.html}</p>`+(a.plan?`<button type="button" class="btn-primary" data-plan="${a.plan}">${ic('dumbbell')}Préparer cette séance</button>`:a.combo?`<button type="button" class="btn-primary" data-coach="${a.combo}">${ic('dumbbell')}Préparer cette séance</button>`:'')+(()=>{const sa=stagnAll();return sa.length?`<div class="note warn">${ic('info')}<span><b>À surveiller</b> · ${sa.slice(0,2).map(x=>esc(x.name)).join(' et ')} ${sa.length>1?'stagnent':'stagne'} depuis 3 séances. Ouvre l'exercice pour voir comment relancer la progression.</span></div>`:'';})()+`<div class="note">${ic('info')}<span><b>Astuce du jour</b> · ${esc(ASTUCES[doy%ASTUCES.length])}</span></div>`;
-  ['#today-coach','#train-coach'].forEach(sel=>{const el=$(sel);el.innerHTML=h;paintIcons(el);});
+  {const el=$('#today-coach');el.innerHTML=h;paintIcons(el);}
 }
 function loadProgramSession(pid,idx){
   const p=PROGRAMS.find(x=>x.id===pid),ss=p&&p.sessions[idx];if(!ss)return;
@@ -1834,7 +1827,6 @@ function platesHTML(total,bar,compact){
   return compact?`<div class="small" style="text-align:center">${txt}${bar?` <span class="muted">· barre ${fkg(bar)} kg</span>`:''}</div>${vis}${warn}`
     :`${vis}<div style="text-align:center">${txt}</div>${leg}<div class="small muted" style="text-align:center">${bar?`Barre de ${fkg(bar)} kg + ${pf(total-bar-r.rest*2)} kg de disques`:'Sans barre'} · même chose de chaque côté.</div>${warn}`;
 }
-function renderPlates(){const b=$('#pc-bar');b.value=String(S.prefs.bar??20);$('#pc-out').innerHTML=platesHTML(num($('#pc-kg').value),+b.value);}
 
 /* ---------- MINUTEUR LIBRE ---------- */
 const TM={mode:'chrono',run:false,t0:0,acc:0,dur:60000,iv:null,fired:false};
@@ -2116,7 +2108,7 @@ function go(tab){
   try{sessionStorage.setItem('cs-tab',tab);}catch(e){}
   window.scrollTo(0,0);
 }
-function renderAll(){renderPlan();renderPlates();renderCalendar();renderBalance();renderProgress();renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderDraft();renderToday();renderSync();}
+function renderAll(){renderPlan();renderCalendar();renderBalance();renderProgress();renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderDraft();renderToday();renderSync();}
 function renderRemote(){renderPlan();renderCalendar();renderBalance();renderProgress();renderPrograms();bindProfile();renderResults();renderWeights();renderTemplates();renderNames();renderSessions();renderPicks();renderGroups();renderToday();}
 
 /* ---------- init ---------- */
@@ -2141,8 +2133,7 @@ $('#picks').addEventListener('click',e=>{const b=e.target.closest('[data-pick]')
 $('#ex-add').addEventListener('click',()=>{draft.push({name:'',lines:[{kg:'',sets:3,reps:10}]});renderDraft();$('#ex-n-'+(draft.length-1))?.focus();});
 loadDraft();wirePlan();wireTimer();wireDraft();wireSync();wireGym();wireCalendar();wireBalance();wireExHistory();
 $('#gym-open').addEventListener('click',openGym);
-$('#pc-kg').addEventListener('input',renderPlates);
-$('#pc-bar').addEventListener('change',e=>{S.prefs.bar=e.target.value;save();renderPlates();});
+
 $('#rest').addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if(!b)return;if(b.dataset.rest==='skip')stopRest();else{RT.end+=15000;RT.total+=15;tickRest();}});
 $('#progress-card').addEventListener('change',e=>{if(e.target.id==='prog-ex'){progEx=e.target.value;renderProgress();}});
 document.addEventListener('click',e=>{if(e.target.closest('button:not([data-ok]):not([data-gym="set"])'))haptic();},true);
